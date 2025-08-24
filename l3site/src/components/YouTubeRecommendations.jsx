@@ -1,0 +1,204 @@
+import React from 'react';
+
+const YouTubeRecommendations = ({ specialization, semester }) => {
+  // Video channels based on specialization and semester
+  const channelData = {
+    isil: {
+      s5: [
+        { id: 1, name: 'Compilation Tutorials', description: 'Compiler design and implementation guides', subscribers: '850K', category: 'Compilation', topics: ['Lexical Analysis', 'Syntax Analysis', 'Semantic Analysis', 'Code Generation'], rating: 4.8, color: 'from-orange-500 to-red-500' },
+        { id: 2, name: 'Network Engineering', description: 'Computer networks and protocols', subscribers: '1.2M', category: 'Networking', topics: ['TCP/IP', 'Network Security', 'Protocols', 'Wireless Networks'], rating: 4.7, color: 'from-blue-500 to-cyan-500' },
+        { id: 3, name: 'Software Engineering Pro', description: 'Advanced software engineering concepts', subscribers: '950K', category: 'Software Engineering', topics: ['Design Patterns', 'Architecture', 'Testing', 'Project Management'], rating: 4.9, color: 'from-purple-500 to-pink-500' },
+        { id: 4, name: 'Operating Systems Deep Dive', description: 'Advanced OS concepts and implementation', subscribers: '750K', category: 'Operating Systems', topics: ['Process Management', 'Memory Management', 'File Systems', 'Virtualization'], rating: 4.6, color: 'from-green-500 to-emerald-500' },
+        { id: 5, name: 'Database Mastery', description: 'Advanced database systems and design', subscribers: '1.1M', category: 'Database', topics: ['Advanced SQL', 'Database Design', 'Data Warehousing', 'Big Data'], rating: 4.8, color: 'from-indigo-500 to-blue-500' },
+        { id: 6, name: 'Information Systems', description: 'Business intelligence and ERP systems', subscribers: '650K', category: 'Information Systems', topics: ['System Analysis', 'Business Intelligence', 'ERP Systems', 'Data Analytics'], rating: 4.7, color: 'from-teal-500 to-cyan-500' }
+      ],
+      s6: [
+        { id: 1, name: 'Object-Oriented Design', description: 'UML modeling and design patterns', subscribers: '800K', category: 'Software Design', topics: ['UML Modeling', 'Design Patterns', 'OOD', 'System Architecture'], rating: 4.8, color: 'from-pink-500 to-rose-500' },
+        { id: 2, name: 'Advanced Networking', description: 'Advanced network protocols and security', subscribers: '900K', category: 'Networking', topics: ['Advanced Protocols', 'Network Security', 'Cloud Networking', 'SDN'], rating: 4.7, color: 'from-cyan-500 to-blue-500' },
+        { id: 3, name: 'Project Management', description: 'Final year project guidance', subscribers: '600K', category: 'Project Management', topics: ['Project Planning', 'Research Methods', 'Implementation', 'Documentation'], rating: 4.6, color: 'from-yellow-500 to-orange-500' },
+        { id: 4, name: 'Enterprise Software', description: 'Enterprise architecture and microservices', subscribers: '750K', category: 'Enterprise', topics: ['Enterprise Architecture', 'Microservices', 'DevOps', 'Agile Methods'], rating: 4.8, color: 'from-violet-500 to-purple-500' }
+      ]
+    },
+    acad: {
+      s5: [
+        { id: 1, name: 'Graph Theory Master', description: 'Graph theory and algorithms', subscribers: '700K', category: 'Mathematics', topics: ['Graph Algorithms', 'Network Flows', 'Matching Theory', 'Graph Coloring'], rating: 4.8, color: 'from-emerald-500 to-green-500' },
+        { id: 2, name: 'OS Fundamentals', description: 'Operating systems concepts', subscribers: '1.1M', category: 'Operating Systems', topics: ['Process Management', 'Memory Management', 'File Systems', 'Virtualization'], rating: 4.7, color: 'from-blue-500 to-indigo-500' },
+        { id: 3, name: 'Network Basics', description: 'Computer networks fundamentals', subscribers: '1.3M', category: 'Networking', topics: ['Network Protocols', 'TCP/IP', 'Network Security', 'Wireless Networks'], rating: 4.9, color: 'from-cyan-500 to-teal-500' },
+        { id: 4, name: 'Software Engineering', description: 'Software engineering principles', subscribers: '950K', category: 'Software Engineering', topics: ['Software Lifecycle', 'Requirements Engineering', 'Design Principles', 'Testing'], rating: 4.8, color: 'from-purple-500 to-violet-500' },
+        { id: 5, name: 'Compiler Design', description: 'Compiler construction tutorials', subscribers: '650K', category: 'Compilation', topics: ['Lexical Analysis', 'Syntax Analysis', 'Semantic Analysis', 'Code Generation'], rating: 4.6, color: 'from-orange-500 to-amber-500' },
+        { id: 6, name: 'Technical English', description: 'English for computer science', subscribers: '500K', category: 'Language', topics: ['Technical Writing', 'Presentation Skills', 'Academic English', 'Professional Communication'], rating: 4.5, color: 'from-rose-500 to-pink-500' }
+      ],
+      s6: [
+        { id: 1, name: 'Web Development Pro', description: 'Modern web development technologies', subscribers: '1.5M', category: 'Web Development', topics: ['HTML/CSS', 'JavaScript', 'React/Angular', 'Backend Development'], rating: 4.9, color: 'from-indigo-500 to-purple-500' },
+        { id: 2, name: 'Technical Documentation', description: 'Documentation and technical writing', subscribers: '400K', category: 'Documentation', topics: ['Technical Documentation', 'API Documentation', 'User Manuals', 'Project Documentation'], rating: 4.6, color: 'from-teal-500 to-emerald-500' },
+        { id: 3, name: 'Professional Skills', description: 'Industry project and professional training', subscribers: '600K', category: 'Professional Development', topics: ['Industry Project', 'Professional Skills', 'Team Collaboration', 'Real-world Application'], rating: 4.7, color: 'from-amber-500 to-yellow-500' },
+        { id: 4, name: 'System Administration', description: 'Linux and system administration', subscribers: '800K', category: 'System Administration', topics: ['Linux Administration', 'Network Administration', 'Security Administration', 'Cloud Administration'], rating: 4.8, color: 'from-slate-500 to-gray-500' }
+      ]
+    }
+  };
+
+  const channels = channelData[specialization?.id]?.[semester?.id] || [];
+
+  const renderStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      );
+    }
+
+    if (hasHalfStar) {
+      stars.push(
+        <svg key="half" className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+          <defs>
+            <linearGradient id="halfStar">
+              <stop offset="50%" stopColor="currentColor" />
+              <stop offset="50%" stopColor="#374151" />
+            </linearGradient>
+          </defs>
+          <path fill="url(#halfStar)" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      );
+    }
+
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <svg key={`empty-${i}`} className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      );
+    }
+
+    return stars;
+  };
+
+  const getContextInfo = () => {
+    if (specialization && semester) {
+      return {
+        title: `${specialization.name} - ${semester.fullName} Videos`,
+        subtitle: `Video playlists for ${specialization.name} ${semester.name}`,
+        description: `Discover the best YouTube channels for ${specialization.name} ${semester.name} courses. These channels offer high-quality content to supplement your learning with visual explanations and real-world examples.`
+      };
+    } else {
+      return {
+        title: 'Video Playlists',
+        subtitle: 'Educational video content',
+        description: 'Discover the best YouTube channels for computer science education. These channels offer high-quality content to supplement your learning.'
+      };
+    }
+  };
+
+  const contextInfo = getContextInfo();
+
+  return (
+    <div className="space-y-8">
+      {/* Header Card */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-red-600/20 to-pink-600/20 rounded-2xl p-6 border border-red-500/30">
+        <div className="absolute inset-0 bg-gradient-to-r from-red-600/0 to-pink-600/0 hover:from-red-600/10 hover:to-pink-600/10 transition-all duration-300"></div>
+        <div className="relative">
+          <div className="flex items-center mb-4">
+            <div className="p-3 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl mr-4">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-white">{contextInfo.title}</h3>
+              <p className="text-red-200 text-lg">{contextInfo.subtitle}</p>
+            </div>
+          </div>
+          <p className="text-gray-300 text-lg leading-relaxed">{contextInfo.description}</p>
+        </div>
+      </div>
+      
+      {/* Channels List */}
+      <div className="space-y-6">
+        {channels.map((channel) => (
+          <div key={channel.id} className="group relative overflow-hidden bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+            <div className={`absolute inset-0 bg-gradient-to-br ${channel.color.replace('from-', 'from-').replace('to-', 'to-')}/10 opacity-0 group-hover:opacity-100 transition-all duration-300`}></div>
+            <div className="relative">
+              {/* Channel Header */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 group-hover:bg-clip-text transition-all duration-300">
+                    {channel.name}
+                  </h3>
+                  <p className="text-gray-300 mt-2 text-lg">{channel.description}</p>
+                </div>
+                <div className="text-right">
+                  <span className="inline-block bg-gradient-to-r from-red-600 to-pink-600 text-white text-sm px-3 py-1 rounded-full font-semibold shadow-lg">
+                    {channel.subscribers} subscribers
+                  </span>
+                </div>
+              </div>
+              
+              {/* Channel Stats */}
+              <div className="flex items-center justify-between mb-6">
+                <span className="text-sm text-gray-300 bg-gray-700/50 px-3 py-1 rounded-lg font-medium">
+                  {channel.category}
+                </span>
+                <div className="flex items-center">
+                  <div className="flex mr-3">{renderStars(channel.rating)}</div>
+                  <span className="text-sm text-gray-300 font-semibold">{channel.rating}</span>
+                </div>
+              </div>
+              
+              {/* Topics Covered */}
+              <div className="mb-6">
+                <h4 className="text-lg font-semibold text-gray-200 mb-3 flex items-center">
+                  <svg className="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Topics Covered:
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {channel.topics.map((topic, index) => (
+                    <span key={index} className="text-sm bg-gray-700/50 text-gray-200 px-3 py-1 rounded-lg border border-gray-600/50 group-hover:border-gray-500/50 transition-all duration-300">
+                      {topic}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Watch Button */}
+              <button className={`w-full bg-gradient-to-r ${channel.color} text-white py-4 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg group-hover:shadow-xl flex items-center justify-center`}>
+                <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                Watch Channel
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Learning Tips */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-yellow-600/20 to-orange-600/20 rounded-2xl p-6 border border-yellow-500/30">
+        <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/0 to-orange-600/0 hover:from-yellow-600/10 hover:to-orange-600/10 transition-all duration-300"></div>
+        <div className="relative">
+          <div className="flex items-center mb-4">
+            <div className="p-3 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl mr-4">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            </div>
+            <h4 className="text-xl font-bold text-white">Learning Tips</h4>
+          </div>
+          <p className="text-gray-300 text-lg leading-relaxed">
+            Subscribe to channels that match your learning style. Many channels offer playlists organized by topic, 
+            making it easy to follow along with your coursework for {specialization?.name} {semester?.name}. 
+            Don't forget to like and comment to support the creators! 🎯✨
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default YouTubeRecommendations;

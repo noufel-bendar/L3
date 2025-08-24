@@ -1,0 +1,694 @@
+import React, { useState } from 'react';
+import LessonDrives from './components/LessonDrives';
+import YouTubeRecommendations from './components/YouTubeRecommendations';
+
+function App() {
+  const [selectedMode, setSelectedMode] = useState(null);
+  const [selectedSpecialization, setSelectedSpecialization] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [selectedSemester, setSelectedSemester] = useState(null);
+  const [activeTab, setActiveTab] = useState('home');
+
+  const specializations = [
+    { id: 'acad', name: 'ACAD', fullName: 'Informatique Général (ACAD)', description: 'General Computer Science', color: 'from-purple-500 to-pink-500', hoverColor: 'hover:from-purple-600 hover:to-pink-600' },
+    { id: 'isil', name: 'ISIL', fullName: 'Ingénierie Système d\'Information et Logiciels (ISIL)', description: 'Information Systems and Software Engineering', color: 'from-cyan-500 to-blue-500', hoverColor: 'hover:from-cyan-600 hover:to-blue-600' }
+  ];
+
+  const academicYears = ['2021/2022', '2022/2023', '2023/2024', '2024/2025'];
+
+  const semesters = [
+    { id: 's5', name: 'S5', fullName: 'Semester 5', description: 'Fifth Semester Courses' },
+    { id: 's6', name: 'S6', fullName: 'Semester 6', description: 'Sixth Semester Courses' }
+  ];
+
+  const navigationTabs = [
+    { id: 'home', name: 'Home' },
+    { id: 'playlist', name: 'Playlist' },
+    { id: 'drives', name: 'Drives' },
+    { id: 'contact', name: 'Contact Me' }
+  ];
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'home':
+        return (
+          <div className="space-y-8">
+            <div className="text-center">
+              <div className="inline-block p-2 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mb-6">
+                <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent mb-4">
+                USTHB Informatique L3 LMD
+              </h1>
+              <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+                Your ultimate learning hub for third-year computer science at USTHB. 
+                Dive into course materials, discover amazing video content, and level up your skills! 🚀
+              </p>
+            </div>
+            
+
+            
+            {/* Mode Selection */}
+            {!selectedMode && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-3xl blur-xl"></div>
+                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
+                  <h2 className="text-3xl font-bold text-white text-center mb-2">Choose Your Learning Resource</h2>
+                  <p className="text-gray-400 text-center mb-8">Select the type of learning resource you want to access.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <button 
+                      onClick={() => setSelectedMode('drives')} 
+                      className="group relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-blue-500/25 border border-blue-500/30"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-indigo-600/0 group-hover:from-blue-600/20 group-hover:to-indigo-600/20 transition-all duration-300"></div>
+                      <div className="relative text-center">
+                        <div className="inline-block p-3 bg-white/10 rounded-2xl mb-4 group-hover:bg-white/20 transition-all duration-300">
+                          <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                        </div>
+                        <h3 className="text-2xl font-bold text-white mb-2">Course Materials</h3>
+                        <p className="text-blue-100 mb-3 text-sm">Comprehensive study resources</p>
+                        <p className="text-blue-200/80 text-xs">Access organized course materials by year and semester</p>
+                      </div>
+                    </button>
+                    <button 
+                      onClick={() => setSelectedMode('videos')} 
+                      className="group relative overflow-hidden bg-gradient-to-br from-purple-600 to-pink-700 p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-purple-500/25 border border-purple-500/30"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/20 group-hover:to-pink-600/20 transition-all duration-300"></div>
+                      <div className="relative text-center">
+                        <div className="inline-block p-3 bg-white/10 rounded-2xl mb-4 group-hover:bg-white/20 transition-all duration-300">
+                          <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <h3 className="text-2xl font-bold text-white mb-2">Video Content</h3>
+                        <p className="text-purple-100 mb-3 text-sm">Learn through videos</p>
+                        <p className="text-purple-200/80 text-xs">Watch curated video content by specialization and semester</p>
+                      </div>
+                    </button>
+                    <a 
+                      href="https://drive.google.com/drive/folders/1G7vXLuCYu9XBk1FBIQNIfDPBNphURNki"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group relative overflow-hidden bg-gradient-to-br from-emerald-600 to-teal-700 p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-emerald-500/25 border border-emerald-500/30"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/0 to-teal-600/0 group-hover:from-emerald-600/20 group-hover:to-teal-600/20 transition-all duration-300"></div>
+                      <div className="relative text-center">
+                        <div className="inline-block p-3 bg-white/10 rounded-2xl mb-4 group-hover:bg-white/20 transition-all duration-300">
+                          <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                        <h3 className="text-2xl font-bold text-white mb-2">Summaries</h3>
+                        <p className="text-emerald-100 mb-3 text-sm">Quick study summaries</p>
+                        <p className="text-emerald-200/80 text-xs">Access course summaries and notes</p>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Discord Section */}
+            {!selectedMode && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-3xl blur-xl"></div>
+                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-indigo-500/30">
+                  <div className="text-center">
+                    <div className="inline-block p-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl mb-6">
+                      <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-4">Join Our Community!</h3>
+                    <p className="text-gray-300 text-lg mb-6">
+                      Join this year's Discord server here:
+                    </p>
+                    <a
+                      href="https://discord.gg/Ef5eeQQpnk"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-500 hover:to-purple-500 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-indigo-500/25"
+                    >
+                      <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+                      </svg>
+                      Join Discord Server
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Specialization Selection (Videos only) */}
+            {selectedMode === 'videos' && !selectedSpecialization && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-xl"></div>
+                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
+                  <h2 className="text-3xl font-bold text-white text-center mb-2">Pick Your Path</h2>
+                  <p className="text-gray-400 text-center mb-8">Which specialization matches your interests?</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {specializations.map((spec) => (
+                      <button 
+                        key={spec.id} 
+                        onClick={() => setSelectedSpecialization(spec)} 
+                        className={`group relative overflow-hidden bg-gradient-to-br ${spec.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
+                      >
+                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
+                        <div className="relative text-center">
+                          <h3 className="text-4xl font-bold text-white mb-4">{spec.name}</h3>
+                          <p className="text-white/90 mb-3 text-lg">{spec.fullName}</p>
+                          <p className="text-white/80 text-sm">{spec.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-8 text-center">
+                    <button onClick={() => setSelectedMode(null)} className="text-cyan-400 hover:text-cyan-300 underline text-lg transition-colors">
+                      ← Back to Resource Selection
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Academic Year Selection (Drives only) */}
+            {selectedMode === 'drives' && !selectedYear && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-3xl blur-xl"></div>
+                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
+                  <h2 className="text-3xl font-bold text-white text-center mb-2">Select Your Year</h2>
+                  <p className="text-gray-400 text-center mb-8">Choose your academic year for course materials</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {academicYears.map((year) => (
+                      <button 
+                        key={year} 
+                        onClick={() => setSelectedYear(year)} 
+                        className="group bg-gradient-to-br from-green-600 to-blue-600 hover:from-green-500 hover:to-blue-500 text-white p-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 border border-green-500/30"
+                      >
+                        <div className="text-center">
+                          <h3 className="text-xl font-bold">{year}</h3>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-8 text-center">
+                    <button onClick={() => setSelectedMode(null)} className="text-cyan-400 hover:text-cyan-300 underline text-lg transition-colors">
+                      ← Back to Resource Selection
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Semester Selection (Drives only) */}
+            {selectedMode === 'drives' && selectedYear && !selectedSemester && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-xl"></div>
+                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
+                  <h2 className="text-3xl font-bold text-white text-center mb-2">Choose Your Semester</h2>
+                  <p className="text-gray-400 text-center mb-8">Select your semester for {selectedYear}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {semesters.map((semester) => (
+                      <button 
+                        key={semester.id} 
+                        onClick={() => setSelectedSemester(semester)} 
+                        className="group bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white p-8 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 border border-purple-500/30"
+                      >
+                        <div className="text-center">
+                          <h3 className="text-4xl font-bold mb-3">{semester.name}</h3>
+                          <p className="text-white/90 mb-2 text-lg">{semester.fullName}</p>
+                          <p className="text-white/80 text-sm">{semester.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-8 text-center">
+                    <button onClick={() => setSelectedYear(null)} className="text-cyan-400 hover:text-cyan-300 underline text-lg transition-colors">
+                      ← Back to Year Selection
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Semester Selection (Videos only) */}
+            {selectedMode === 'videos' && selectedSpecialization && !selectedSemester && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-3xl blur-xl"></div>
+                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
+                  <h2 className="text-3xl font-bold text-white text-center mb-2">Choose Your Semester</h2>
+                  <p className="text-gray-400 text-center mb-8">Select your semester for {selectedSpecialization.name}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {semesters.map((semester) => (
+                      <button 
+                        key={semester.id} 
+                        onClick={() => setSelectedSemester(semester)} 
+                        className="group bg-gradient-to-br from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white p-8 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 border border-orange-500/30"
+                      >
+                        <div className="text-center">
+                          <h3 className="text-4xl font-bold mb-3">{semester.name}</h3>
+                          <p className="text-white/90 mb-2 text-lg">{semester.fullName}</p>
+                          <p className="text-white/80 text-sm">{semester.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-8 text-center">
+                    <button onClick={() => setSelectedSpecialization(null)} className="text-cyan-400 hover:text-cyan-300 underline text-lg transition-colors">
+                      ← Back to Specialization Selection
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Main Content - Course Materials (Drives) */}
+            {selectedMode === 'drives' && selectedYear && selectedSemester && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-xl"></div>
+                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
+                  <h2 className="text-3xl font-bold text-white mb-6 flex items-center">
+                    <div className="inline-block p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl mr-4">
+                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                    </div>
+                    Course Materials - {selectedYear} - {selectedSemester.name}
+                  </h2>
+                  <LessonDrives 
+                    year={selectedYear} 
+                    semester={selectedSemester} 
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Main Content - Course Materials (Videos) */}
+            {selectedMode === 'videos' && selectedSpecialization && selectedSemester && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-pink-500/20 rounded-3xl blur-xl"></div>
+                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
+                  <h2 className="text-3xl font-bold text-white mb-6 flex items-center">
+                    <div className="inline-block p-3 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl mr-4">
+                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    Video Course Materials - {selectedSpecialization.name} - {selectedSemester.name}
+                  </h2>
+                  <LessonDrives 
+                    specialization={selectedSpecialization} 
+                    semester={selectedSemester} 
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'playlist':
+        return (
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-xl"></div>
+            <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
+              <h2 className="text-4xl font-bold text-white mb-6">🎬 Video Playlists</h2>
+              <p className="text-gray-300 mb-8 text-lg">Discover amazing video content to boost your learning!</p>
+              
+              {/* Specialization Selection for Playlist */}
+              {!selectedSpecialization ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Specialization</h3>
+                    <p className="text-gray-400 text-lg">Select your specialization to view available video content</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {specializations.map((spec) => (
+                      <button 
+                        key={spec.id} 
+                        onClick={() => setSelectedSpecialization(spec)} 
+                        className={`group relative overflow-hidden bg-gradient-to-br ${spec.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
+                      >
+                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
+                        <div className="relative text-center">
+                          <h3 className="text-4xl font-bold text-white mb-4">{spec.name}</h3>
+                          <p className="text-white/90 mb-3 text-lg">{spec.fullName}</p>
+                          <p className="text-white/80 text-sm">{spec.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : !selectedSemester ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Semester</h3>
+                    <p className="text-gray-400 text-lg">Select your semester for {selectedSpecialization.name}</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {semesters.map((semester) => (
+                      <button 
+                        key={semester.id} 
+                        onClick={() => setSelectedSemester(semester)} 
+                        className="group bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white p-8 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 border border-purple-500/30"
+                      >
+                        <div className="text-center">
+                          <h3 className="text-4xl font-bold mb-3">{semester.name}</h3>
+                          <p className="text-white/90 mb-2 text-lg">{semester.fullName}</p>
+                          <p className="text-white/80 text-sm">{semester.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-center">
+                    <button onClick={() => setSelectedSpecialization(null)} className="text-purple-400 hover:text-purple-300 underline text-lg transition-colors">
+                      ← Back to Specialization Selection
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-2xl font-bold text-white">{selectedSpecialization.name} - {selectedSemester.name}</h3>
+                      <p className="text-gray-400">Video content for your selected specialization and semester</p>
+                    </div>
+                    <button 
+                      onClick={() => setSelectedSemester(null)} 
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
+                    >
+                      ← Back
+                    </button>
+                  </div>
+                  <LessonDrives 
+                    specialization={selectedSpecialization} 
+                    semester={selectedSemester} 
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
+      case 'drives':
+        return (
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-3xl blur-xl"></div>
+            <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
+              <h2 className="text-4xl font-bold text-white mb-6">📚 Course Drives</h2>
+              <p className="text-gray-300 mb-8 text-lg">Access all your course materials and study resources!</p>
+              
+              {/* Specialization Selection for Drives */}
+              {!selectedSpecialization ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Specialization</h3>
+                    <p className="text-gray-400 text-lg">Select your specialization to view available course materials</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {specializations.map((spec) => (
+                      <button 
+                        key={spec.id} 
+                        onClick={() => setSelectedSpecialization(spec)} 
+                        className={`group relative overflow-hidden bg-gradient-to-br ${spec.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
+                      >
+                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
+                        <div className="relative text-center">
+                          <h3 className="text-4xl font-bold text-white mb-4">{spec.name}</h3>
+                          <p className="text-white/90 mb-3 text-lg">{spec.fullName}</p>
+                          <p className="text-white/80 text-sm">{spec.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : !selectedYear ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-4">Select Your Year</h3>
+                    <p className="text-gray-400 text-lg">Choose your academic year for {selectedSpecialization.name}</p>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {academicYears.map((year) => (
+                      <button 
+                        key={year} 
+                        onClick={() => setSelectedYear(year)} 
+                        className="group bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white p-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 border border-blue-500/30"
+                      >
+                        <div className="text-center">
+                          <h3 className="text-xl font-bold">{year}</h3>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-center">
+                    <button onClick={() => setSelectedSpecialization(null)} className="text-blue-400 hover:text-blue-300 underline text-lg transition-colors">
+                      ← Back to Specialization Selection
+                    </button>
+                  </div>
+                </div>
+              ) : !selectedSemester ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Semester</h3>
+                    <p className="text-gray-400 text-lg">Select your semester for {selectedSpecialization.name} ({selectedYear})</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {semesters.map((semester) => (
+                      <button 
+                        key={semester.id} 
+                        onClick={() => setSelectedSemester(semester)} 
+                        className="group bg-gradient-to-br from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white p-8 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 border border-indigo-500/30"
+                      >
+                        <div className="text-center">
+                          <h3 className="text-4xl font-bold mb-3">{semester.name}</h3>
+                          <p className="text-white/90 mb-2 text-lg">{semester.fullName}</p>
+                          <p className="text-white/80 text-sm">{semester.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-center">
+                    <button onClick={() => setSelectedYear(null)} className="text-blue-400 hover:text-blue-300 underline text-lg transition-colors">
+                      ← Back to Year Selection
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-2xl font-bold text-white">{selectedSpecialization.name} - {selectedYear} - {selectedSemester.name}</h3>
+                      <p className="text-gray-400">Course materials for your selected specialization, year, and semester</p>
+                    </div>
+                    <button 
+                      onClick={() => setSelectedSemester(null)} 
+                      className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-blue-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105"
+                    >
+                      ← Back
+                    </button>
+                  </div>
+                  <LessonDrives 
+                    specialization={selectedSpecialization}
+                    year={selectedYear} 
+                    semester={selectedSemester} 
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
+      case 'contact':
+        return (
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-3xl blur-xl"></div>
+            <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
+              <h2 className="text-4xl font-bold text-white mb-6">💬 Contact Me</h2>
+              <div className="max-w-3xl mx-auto">
+                <div className="bg-gradient-to-r from-green-600/20 to-blue-600/20 rounded-2xl p-8 mb-8 border border-green-500/30">
+                  <h3 className="text-2xl font-bold text-white mb-6">Get in Touch</h3>
+                  <p className="text-gray-300 mb-6 text-lg">Have questions about the course materials or need assistance? Feel free to reach out!</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center">
+                        <div className="p-3 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl mr-4">
+                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold">Email</p>
+                          <p className="text-gray-300">bendarnoufel@gmail.com</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="p-3 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl mr-4">
+                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold">University</p>
+                          <p className="text-gray-300">USTHB - University of Science and Technology Houari Boumediene</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center">
+                        <div className="p-3 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl mr-4">
+                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold">Department</p>
+                          <p className="text-gray-300">Computer Science L3 LMD</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="p-3 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl mr-4">
+                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold">Portfolio</p>
+                          <a 
+                            href="https://noufel-bendar.vercel.app/" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-400 hover:text-blue-300 underline transition-colors"
+                          >
+                            noufel-bendar.vercel.app
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl p-8 border border-purple-500/30">
+                  <h4 className="text-xl font-bold text-white mb-4">About the Platform</h4>
+                  <p className="text-gray-300 text-lg">This learning platform is designed specifically for third-year computer science students at USTHB, providing easy access to course materials, video resources, and academic support. Built with love for the CS community! 💻✨</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+      
+      {/* Header Navigation */}
+      <header className="relative bg-gray-900/80 backdrop-blur-md shadow-2xl sticky top-0 z-40 border-b border-gray-700/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            <div className="flex items-center">
+              <div className="flex items-center">
+                <div className="p-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl mr-4">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                  USTHB Informatique L3 LMD
+                </h1>
+              </div>
+              {selectedMode && (
+                <div className="ml-8 flex items-center space-x-2">
+                  <span className="text-gray-400">•</span>
+                  <span className="text-cyan-400 font-medium">{selectedMode === 'drives' ? '📚 Drives' : '🎬 Videos'}</span>
+                  {selectedMode === 'videos' && selectedSpecialization && (
+                    <>
+                      <span className="text-gray-400">•</span>
+                      <span className="text-purple-400">{selectedSpecialization.name}</span>
+                    </>
+                  )}
+                  {selectedYear && selectedMode === 'drives' && (
+                    <>
+                      <span className="text-gray-400">•</span>
+                      <span className="text-green-400">{selectedYear}</span>
+                    </>
+                  )}
+                  {selectedSemester && (
+                    <>
+                      <span className="text-gray-400">•</span>
+                      <span className="text-pink-400">{selectedSemester.name}</span>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+            <nav className="flex space-x-2">
+              {navigationTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    // Reset state when switching to home
+                    if (tab.id === 'home') {
+                      setSelectedMode(null);
+                      setSelectedSpecialization(null);
+                      setSelectedYear(null);
+                      setSelectedSemester(null);
+                    }
+                  }}
+                  className={`px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 transform hover:scale-105 ${
+                    activeTab === tab.id
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-800/50'
+                  }`}
+                >
+                  {tab.name}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {renderContent()}
+      </main>
+
+      {/* Footer */}
+      <footer className="relative bg-gray-900/80 backdrop-blur-md text-white py-12 mt-16 border-t border-gray-700/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="inline-block p-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl mb-6">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              USTHB Informatique L3 LMD
+            </h3>
+            <p className="text-gray-400 mb-6 text-lg">University of Science and Technology Houari Boumediene</p>
+            <div className="border-t border-gray-700/50 pt-6">
+              <p className="text-lg text-gray-300">Made by <strong className="text-cyan-400">Bendar Noufel</strong></p>
+              <p className="text-sm text-gray-500 mt-2">Computer Science L3 LMD Student | Building the future of education</p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+export default App;
