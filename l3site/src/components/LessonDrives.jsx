@@ -36,145 +36,32 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
     load();
   }, [year, semester, specialization, subject]);
 
-  // Course lists for Videos flow (Specialization → Semester → Courses)
-  const courseData = {
-    isil: {
-      s5: [
-        { 
-          id: 1, 
-          name: 'Compilation', 
-          videoPlaylists: [
-            { title: 'Compilation Playlist 1', url: 'https://youtube.com/playlist?list=PLSENmhglzJjRNT4RlXr8lB9LbZjcB2Wgl&si=cXjc7iO5bkGSUoZn' },
-            { title: 'Compilation Playlist 2', url: 'https://youtube.com/playlist?list=PLQyCQ7CblbzHbl_oKYcEN8dje_woFTORi&si=RsctQZ67TIxdy6T5' }
-          ]
-        },
-        { 
-          id: 2, 
-          name: 'Réseaux', 
-          videoPlaylists: [
-            { title: 'Réseaux Playlist 1', url: 'https://youtube.com/playlist?list=PLx9305BZWH0QMgCSQnxozrG5-baIrj0Vd&si=GAl7ICVIvQlm2ohi' },
-            { title: 'Réseaux Playlist 2', url: 'https://youtube.com/playlist?list=PLQyCQ7CblbzEAG7j0_9Tq7zt5H_0ZzR5X&si=5xXwL_bVZ29SSIBn' },
-            { title: 'Réseaux Playlist 3', url: 'https://youtube.com/playlist?list=PLSENmhglzJjR10lPQk8HOXYADlHqivX9e&si=KrMiCX2otNd19nJl' }
-          ]
-        },
-        { 
-          id: 3, 
-          name: 'Génie Logiciel 2', 
-          videoPlaylists: [
-            { title: 'Génie Logiciel 2 Playlist', url: 'https://youtube.com/playlist?list=PLbpBG2OLEPIt6kFEr8fOEbY0uJZoIU8MH&si=gt_EpBvg97CAsUhj' }
-          ]
-        },
-        { 
-          id: 4, 
-          name: 'Système d\'Exploitation 2', 
-          videoPlaylists: [
-            { title: 'Système d\'Exploitation 2 Playlist 1', url: 'https://youtube.com/playlist?list=PLQyCQ7CblbzHAB52EQKetfRFm5tZbrGRC&si=d7cFliStFy7QHgUw' },
-            { title: 'Système d\'Exploitation 2 Playlist 2', url: 'https://youtube.com/playlist?list=PLx9305BZWH0QKonjijZcCZAwuV24_MPZN&si=RNP0C1c31IawUBxc' }
-          ]
-        },
-        { 
-          id: 5, 
-          name: 'Base de Données 2', 
-          videoPlaylists: [
-            { title: 'Base de Données 2 Playlist', url: 'https://youtube.com/playlist?list=PLbpBG2OLEPIskDw1qPO-G8ZUyyAOiYYTm&si=2CerZpqmnP4plJh9' }
-          ]
-        },
-        { 
-          id: 6, 
-          name: 'Système d\'Informatique 2', 
-          videoPlaylists: [
-            { title: 'Système d\'Informatique 2 Playlist 1', url: 'https://youtube.com/playlist?list=PLbpBG2OLEPIvK46CtzzjmmreYAHFeas99&si=hOilJfNf6s5nrD4u' },
-            { title: 'Système d\'Informatique 2 Playlist 2', url: 'https://youtube.com/playlist?list=PLx9305BZWH0QuEQcG-5qzpBGFfC0r_QmR&si=hL1a4t3l7LJKBbBS' }
-          ]
-        }
-      ],
-      s6: [
-        { id: 1, name: 'ORAD' },
-        { 
-          id: 2, 
-          name: 'Réseaux 2', 
-          videoPlaylists: [
-            { title: 'Réseaux 2 Playlist', url: 'https://youtube.com/playlist?list=PLbpBG2OLEPIteBeqC80ZVch3TJVdiOrev&si=HwUrsAoYNrkZXrG7' }
-          ]
-        },
-        { id: 3, name: 'PFE' },
-        { 
-          id: 4, 
-          name: 'Génie Logiciel 3', 
-          videoPlaylists: [
-            { title: 'Génie Logiciel 3 Playlist', url: 'https://youtube.com/playlist?list=PLbpBG2OLEPIt4WzPPVYGbGe8zRaxXnUao&si=eaafZGDc5z0FhY34' }
-          ]
-        }
-      ]
-    },
-    acad: {
-      s5: [
-        { 
-          id: 1, 
-          name: 'Théorie des Graphes', 
-          videoPlaylists: [
-            { title: 'Théorie des Graphes Playlist 1', url: 'https://youtube.com/playlist?list=PLQyCQ7CblbzFWmq9d0ETF4IDkJWm_1umE&si=kWedENK4Q33M6uzs' },
-            { title: 'Théorie des Graphes Playlist 2', url: 'https://youtube.com/playlist?list=PLbpBG2OLEPIsiJFlOYOsNGbeNuP8IS8-o&si=IdqithvB0Q2qulB9' },
-            { title: 'Théorie des Graphes Playlist 3', url: 'https://youtube.com/playlist?list=PLx9305BZWH0Qws8o7z9vkK9EtLUJM_OHJ&si=k2LZViSAyyyQ1qyI' }
-          ]
-        },
-        { 
-          id: 2, 
-          name: 'Système d\'Exploitation 2', 
-          videoPlaylists: [
-            { title: 'Système d\'Exploitation 2 Playlist 1', url: 'https://youtube.com/playlist?list=PLQyCQ7CblbzHAB52EQKetfRFm5tZbrGRC&si=d7cFliStFy7QHgUw' },
-            { title: 'Système d\'Exploitation 2 Playlist 2', url: 'https://youtube.com/playlist?list=PLx9305BZWH0QKonjijZcCZAwuV24_MPZN&si=RNP0C1c31IawUBxc' }
-          ]
-        },
-        { 
-          id: 3, 
-          name: 'Réseaux', 
-          videoPlaylists: [
-            { title: 'Réseaux Playlist 1', url: 'https://youtube.com/playlist?list=PLx9305BZWH0QMgCSQnxozrG5-baIrj0Vd&si=GAl7ICVIvQlm2ohi' },
-            { title: 'Réseaux Playlist 2', url: 'https://youtube.com/playlist?list=PLQyCQ7CblbzEAG7j0_9Tq7zt5H_0ZzR5X&si=5xXwL_bVZ29SSIBn' },
-            { title: 'Réseaux Playlist 3', url: 'https://youtube.com/playlist?list=PLSENmhglzJjR10lPQk8HOXYADlHqivX9e&si=KrMiCX2otNd19nJl' }
-          ]
-        },
-        { 
-          id: 4, 
-          name: 'Génie Logiciel', 
-          videoPlaylists: [
-            { title: 'Génie Logiciel Playlist 1', url: 'https://youtube.com/playlist?list=PLSENmhglzJjRo7ziNTHkAq9YTezFxtYob&si=Kn41fref4nmf-1y1' },
-            { title: 'Génie Logiciel Playlist 2', url: 'https://youtube.com/playlist?list=PLQyCQ7CblbzFgIsYqB7wXQxrqcWyylFxc&si=vKcgnkSm6-3kGp2o' },
-            { title: 'Génie Logiciel Playlist 3', url: 'https://youtube.com/playlist?list=PLbpBG2OLEPItQz1M8XymauMPF7q2zf2AZ&si=aCHTNU4gqTmU1_E3' }
-          ]
-        },
-        { 
-          id: 5, 
-          name: 'Compilation', 
-          videoPlaylists: [
-            { title: 'Compilation Playlist 1', url: 'https://youtube.com/playlist?list=PLSENmhglzJjRNT4RlXr8lB9LbZjcB2Wgl&si=cXjc7iO5bkGSUoZn' },
-            { title: 'Compilation Playlist 2', url: 'https://youtube.com/playlist?list=PLQyCQ7CblbzHbl_oKYcEN8dje_woFTORi&si=RsctQZ67TIxdy6T5' }
-          ]
-        },
-        { 
-          id: 6, 
-          name: 'Anglais 3', 
-          videoPlaylists: [
-            { title: 'Anglais 3 Playlist', url: 'https://youtube.com/playlist?list=PLQyCQ7CblbzHf9_j0j5Y9oUiyYcScd8VC&si=sER3yR3XHzB6zc2z' }
-          ]
-        }
-      ],
-      s6: [
-        { 
-          id: 1, 
-          name: 'Programmation Web', 
-          videoPlaylists: [
-            { title: 'Programmation Web Playlist 1', url: 'https://youtube.com/playlist?list=PLbpBG2OLEPIu59JDvKzkJGtBAdZNdZ5mu&si=noi48A9WWXDTKNdF' },
-            { title: 'Programmation Web Playlist 2', url: 'https://youtube.com/playlist?list=PLSENmhglzJjTk1cfzvCsWrxKng1GTkOxn&si=IcaL2OJgXDfkHfFb' }
-          ]
-        },
-        { id: 2, name: 'Doc STR' },
-        { id: 3, name: 'PFP' },
-        { id: 4, name: 'Admin' }
-      ]
-    }
+  // Exam resources by specialization
+  const examLinks = {
+    isil_a: [
+      { name: 'Compilation', url: 'https://example.com/isil_a_compilation', color: 'from-cyan-500 to-blue-500' },
+      { name: 'Réseaux', url: 'https://example.com/isil_a_reseaux', color: 'from-blue-500 to-indigo-500' }
+    ],
+    isil_b: [
+      { name: 'Compilation', url: 'https://example.com/isil_b_compilation', color: 'from-indigo-500 to-purple-500' },
+      { name: 'Réseaux', url: 'https://example.com/isil_b_reseaux', color: 'from-purple-500 to-pink-500' }
+    ],
+    isil_c: [
+      { name: 'Compilation', url: 'https://example.com/isil_c_compilation', color: 'from-indigo-500 to-purple-500' }
+    ],
+    acad_a: [
+      { name: 'Théorie des Graphes', url: 'https://example.com/acad_a_graphes', color: 'from-purple-500 to-pink-500' },
+      { name: 'Réseaux', url: 'https://example.com/acad_a_reseaux', color: 'from-pink-500 to-rose-500' }
+    ],
+    acad_b: [
+      { name: 'Théorie des Graphes', url: 'https://example.com/acad_b_graphes', color: 'from-rose-500 to-red-500' }
+    ],
+    acad_c: [
+      { name: 'Compilation', url: 'https://example.com/acad_c_compilation', color: 'from-red-500 to-pink-500' }
+    ]
   };
+
+  // Course data is now fetched from the backend API in the useEffect above
 
   // Determine if this is Drives flow, Videos flow, or Exams flow
   const isDrivesFlow = year && semester && !specialization;
@@ -279,7 +166,7 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
 
   if (isVideosFlow) {
     // Videos flow: Display course list with video playlists
-    const courses = courseData[specialization?.id]?.[semester?.id] || [];
+    // courses state is already populated from the backend API in useEffect
 
     return (
       <div className="space-y-8">

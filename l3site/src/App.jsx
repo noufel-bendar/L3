@@ -14,8 +14,12 @@ function App() {
   const [activeTab, setActiveTab] = useState('home');
 
   const specializations = [
-    { id: 'acad', name: 'ACAD', fullName: 'Informatique Général (ACAD)', description: 'General Computer Science', color: 'from-purple-500 to-pink-500', hoverColor: 'hover:from-purple-600 hover:to-pink-600' },
-    { id: 'isil', name: 'ISIL', fullName: 'Ingénierie Système d\'Information et Logiciels (ISIL)', description: 'Information Systems and Software Engineering', color: 'from-cyan-500 to-blue-500', hoverColor: 'hover:from-cyan-600 hover:to-blue-600' }
+    { id: 'acad_a', name: 'ACAD A', fullName: 'Informatique Général A (ACAD A)', description: 'General Computer Science A', color: 'from-purple-500 to-pink-500', hoverColor: 'hover:from-purple-600 hover:to-pink-600' },
+    { id: 'acad_b', name: 'ACAD B', fullName: 'Informatique Général B (ACAD B)', description: 'General Computer Science B', color: 'from-pink-500 to-rose-500', hoverColor: 'hover:from-pink-600 hover:to-rose-600' },
+    { id: 'acad_c', name: 'ACAD C', fullName: 'Informatique Général C (ACAD C)', description: 'General Computer Science C', color: 'from-rose-500 to-red-500', hoverColor: 'hover:from-rose-600 hover:to-red-600' },
+    { id: 'isil_a', name: 'ISIL A', fullName: 'Ingénierie Système d\'Information et Logiciels A (ISIL A)', description: 'Information Systems and Software Engineering A', color: 'from-cyan-500 to-blue-500', hoverColor: 'hover:from-cyan-600 hover:to-blue-600' },
+    { id: 'isil_b', name: 'ISIL B', fullName: 'Ingénierie Système d\'Information et Logiciels B (ISIL B)', description: 'Information Systems and Software Engineering B', color: 'from-blue-500 to-indigo-500', hoverColor: 'hover:from-blue-600 hover:to-indigo-600' },
+    { id: 'isil_c', name: 'ISIL C', fullName: 'Ingénierie Système d\'Information et Logiciels C (ISIL C)', description: 'Information Systems and Software Engineering C', color: 'from-indigo-500 to-purple-500', hoverColor: 'hover:from-indigo-600 hover:to-purple-600' }
   ];
 
   const [academicYears, setAcademicYears] = useState([]);

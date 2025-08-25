@@ -49,11 +49,15 @@ class Course(models.Model):
         S6 = "s6", "S6"
 
     class Specialization(models.TextChoices):
-        ISIL = "isil", "ISIL"
-        ACAD = "acad", "ACAD"
+        ISIL_A = "isil_a", "ISIL A"
+        ISIL_B = "isil_b", "ISIL B"
+        ISIL_C = "isil_c", "ISIL C"
+        ACAD_A = "acad_a", "ACAD A"
+        ACAD_B = "acad_b", "ACAD B"
+        ACAD_C = "acad_c", "ACAD C"
 
     name = models.CharField(max_length=255)
-    specialization = models.CharField(max_length=8, choices=Specialization.choices)
+    specialization = models.CharField(max_length=16, choices=Specialization.choices)
     semester = models.CharField(max_length=8, choices=Semester.choices)
 
     class Meta:
@@ -75,8 +79,12 @@ class VideoPlaylist(models.Model):
 
 class ExamResource(models.Model):
     class Specialization(models.TextChoices):
-        ISIL = "isil", "ISIL"
-        ACAD = "acad", "ACAD"
+        ISIL_A = "isil_a", "ISIL A"
+        ISIL_B = "isil_b", "ISIL B"
+        ISIL_C = "isil_c", "ISIL C"
+        ACAD_A = "acad_a", "ACAD A"
+        ACAD_B = "acad_b", "ACAD B"
+        ACAD_C = "acad_c", "ACAD C"
 
     name = models.CharField(max_length=255)
     specialization = models.CharField(max_length=16, choices=Specialization.choices)
