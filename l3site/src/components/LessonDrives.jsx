@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { getJson } from '../api';
 
-const LessonDrives = ({ specialization, year, semester, subject }) => {
-  const [driveLinks, setDriveLinks] = useState(null);
+const LessonDrives = ({ specialization, semester, subject }) => {
+  const [driveLinks, setDriveLinks] = useState([]);
   const [courses, setCourses] = useState([]);
   const [examResources, setExamResources] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,28 +14,26 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
       setError(null);
       
       try {
-        // Drives by academic year/semester/specialization
-        if (year && semester) {
-          // Fetch all drive links and group them locally by display year
+        // Course materials (Drive links) for specialization+semester
+        if (specialization && semester && !subject) {
           const links = await getJson('/drive-links/');
-          const grouped = {};
-          links.forEach((l) => {
-            const display = `${l.start_year}-${l.end_year}`;
-            if (!grouped[display]) grouped[display] = { s5: {}, s6: {} };
-            grouped[display][l.semester][l.specialization] = l.url;
-          });
-          setDriveLinks(grouped);
+          // Filter by current semester and specialization
+          const filtered = links.filter(link => 
+            link.semester === semester.id && 
+            link.specialization === specialization.id
+          );
+          setDriveLinks(filtered);
         }
 
         // Videos courses for specialization+semester
         if (specialization && semester && !subject) {
-          const cs = await getJson(`/courses/?specialization=${specialization}&semester=${semester.id}`);
+          const cs = await getJson(`/courses/?specialization=${specialization.id}&semester=${semester.id}`);
           setCourses(cs.map((c) => ({ id: c.id, name: c.name, videoPlaylists: c.videoPlaylists })));
         }
 
         // Exam resources by specialization
         if (specialization && subject) {
-          const ex = await getJson(`/exam-resources/?specialization=${specialization}`);
+          const ex = await getJson(`/exam-resources/?specialization=${specialization.id}`);
           setExamResources(ex);
         }
       } catch (err) {
@@ -46,7 +44,7 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
       }
     }
     load();
-  }, [year, semester, specialization, subject]);
+  }, [specialization, semester, subject]);
 
   // Loading state
   if (loading) {
@@ -82,17 +80,14 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
     );
   }
 
-  // Determine if this is Drives flow, Videos flow, or Exams flow
-  const isDrivesFlow = year && semester && !specialization;
+  // Determine if this is Course Materials flow, Videos flow, or Exams flow
+  const isCourseMaterialsFlow = specialization && semester && !subject;
   const isVideosFlow = specialization && semester && !subject;
   const isExamsFlow = specialization && subject;
 
-  if (isDrivesFlow) {
-    // Drives flow: Display Google Drive links for each specialization
-    const yearData = driveLinks?.[year];
-    const semesterData = yearData?.[semester.id];
-    
-    if (!semesterData) {
+  if (isCourseMaterialsFlow) {
+    // Course Materials flow: Display Google Drive links for the selected specialization and semester
+    if (!driveLinks.length) {
       return (
         <div className="text-center py-12">
           <div className="inline-block p-4 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full mb-4">
@@ -100,7 +95,7 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <p className="text-gray-400 text-xl">No drive links available for {year} - {semester.name}</p>
+          <p className="text-gray-400 text-xl">No course materials available for {specialization.name} - {semester.name}</p>
           <p className="text-gray-500 text-sm mt-2">Please check back later or contact the administrator.</p>
         </div>
       );
@@ -129,61 +124,58 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-white">
-                  Course Materials - {year} - {semester.fullName}
+                  Course Materials - {specialization.name} - {semester.name}
                 </h3>
                 <p className="text-blue-200 text-lg">
-                  Access course materials for all specializations
+                  Access course materials for {specialization.name} specialization
                 </p>
               </div>
             </div>
             <p className="text-gray-300 text-lg leading-relaxed">
-              Select your specialization to access the corresponding Google Drive folder containing all course materials for {year} - {semester.fullName}.
+              Access the Google Drive folder containing all course materials for {specialization.name} specialization, {semester.name}.
             </p>
           </div>
         </div>
         
-        {/* Specializations Grid */}
+        {/* Course Materials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {specializations.map((spec) => {
-            const driveLink = semesterData[spec.id];
-            if (!driveLink) return null;
+          {driveLinks.map((link, index) => (
             
-            return (
-              <div key={spec.id} className="group relative overflow-hidden bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+            <div key={index} className="group relative overflow-hidden bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
                 <div className="relative">
-                  {/* Specialization Header */}
+                  {/* Academic Year Header */}
                   <div className="flex items-center mb-4">
-                    <div className={`p-3 bg-gradient-to-r ${spec.color} rounded-xl mr-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl mr-4 group-hover:scale-110 transition-transform duration-300">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                       </svg>
                     </div>
                     <div className="flex-1">
                       <h3 className="text-xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 group-hover:bg-clip-text transition-all duration-300">
-                        {spec.name}
+                        {link.start_year}-{link.end_year}
                       </h3>
+                      <p className="text-gray-400 text-sm">{link.semester.toUpperCase()}</p>
                     </div>
                   </div>
                   
                   {/* Drive Link */}
                   <a
-                    href={driveLink}
+                    href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center p-3 bg-blue-600/20 rounded-lg group-hover:bg-blue-600/30 transition-all duration-300 border border-blue-500/30 hover:border-blue-500/50"
                   >
                     <svg className="w-5 h-5 mr-3 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                      <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.732 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-sm text-gray-300 group-hover:text-white transition-colors duration-300">Access Google Drive</span>
+                    <span className="text-sm text-gray-300 group-hover:text-white transition-colors duration-300">Access Course Materials</span>
                     <svg className="w-4 h-4 ml-auto text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                   </a>
                 </div>
               </div>
-            );
-          })}
+          ))}
         </div>
       </div>
     );

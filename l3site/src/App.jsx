@@ -496,10 +496,10 @@ function App() {
                       ← Back
                     </button>
                   </div>
-                  <LessonDrives 
-                    specialization={{ id: `${selectedMajor.id}_${selectedSection.id}`, name: `${selectedMajor.name} ${selectedSection.id.toUpperCase()}` }} 
-                    semester={selectedSemester} 
-                  />
+                                     <LessonDrives 
+                     semester={selectedSemester}
+                     specialization={{ id: `${selectedMajor.id}_${selectedSection.id}`, name: `${selectedMajor.name} ${selectedSection.id.toUpperCase()}` }}
+                   />
                 </div>
               )}
             </div>
