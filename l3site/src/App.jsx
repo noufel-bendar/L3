@@ -427,20 +427,26 @@ function App() {
                   <h2 className="text-3xl font-bold text-white text-center mb-2">Choose Your Subject</h2>
                   <p className="text-gray-400 text-center mb-8">Select your subject for {selectedSpecialization.name}</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {subjects[selectedSpecialization.id].map((subject) => (
-                      <button 
-                        key={subject.id} 
-                        onClick={() => setSelectedSubject(subject)} 
-                        className={`group relative overflow-hidden bg-gradient-to-br ${subject.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
-                      >
-                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
-                        <div className="relative text-center">
-                          <h3 className="text-4xl font-bold text-white mb-4">{subject.name}</h3>
-                          <p className="text-white/90 mb-3 text-lg">Exam materials</p>
-                          <p className="text-white/80 text-sm">Access exam materials for {subject.name}</p>
-                        </div>
-                      </button>
-                    ))}
+                    {(() => {
+                      // Filter subjects based on specialization type (isil vs acad)
+                      const specializationType = selectedSpecialization.id.startsWith('isil') ? 'isil' : 'acad';
+                      const availableSubjects = subjects[specializationType] || [];
+                      
+                      return availableSubjects.map((subject) => (
+                        <button 
+                          key={subject.id} 
+                          onClick={() => setSelectedSubject(subject)} 
+                          className={`group relative overflow-hidden bg-gradient-to-br ${subject.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
+                        >
+                          <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
+                          <div className="relative text-center">
+                            <h3 className="text-4xl font-bold text-white mb-4">{subject.name}</h3>
+                            <p className="text-white/90 mb-3 text-lg">Exam materials</p>
+                            <p className="text-white/80 text-sm">Access exam materials for {subject.name}</p>
+                          </div>
+                        </button>
+                      ));
+                    })()}
                   </div>
                   <div className="mt-8 text-center">
                     <button onClick={() => setSelectedSpecialization(null)} className="text-cyan-400 hover:text-cyan-300 underline text-lg transition-colors">
@@ -781,21 +787,27 @@ function App() {
                     <p className="text-gray-400 text-lg">Select your subject for {selectedSpecialization.name}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {subjects[selectedSpecialization.id].map((subject, index) => (
-                      <button 
-                        key={subject.id} 
-                        onClick={() => setSelectedSubject(subject)} 
-                        className={`group relative overflow-hidden bg-gradient-to-br ${subject.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20 animate-fade-in-up hover:animate-pulse`}
-                        style={{ animationDelay: `${300 + index * 100}ms` }}
-                      >
-                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl group-hover:animate-ping"></div>
-                        <div className="relative text-center">
-                          <h3 className="text-4xl font-bold text-white mb-4">{subject.name}</h3>
-                          <p className="text-white/90 mb-3 text-lg">Exam materials</p>
-                          <p className="text-white/80 text-sm">Access exam materials for {subject.name}</p>
-                        </div>
-                      </button>
-                    ))}
+                    {(() => {
+                      // Filter subjects based on specialization type (isil vs acad)
+                      const specializationType = selectedSpecialization.id.startsWith('isil') ? 'isil' : 'acad';
+                      const availableSubjects = subjects[specializationType] || [];
+                      
+                      return availableSubjects.map((subject, index) => (
+                        <button 
+                          key={subject.id} 
+                          onClick={() => setSelectedSubject(subject)} 
+                          className={`group relative overflow-hidden bg-gradient-to-br ${subject.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20 animate-fade-in-up hover:animate-pulse`}
+                          style={{ animationDelay: `${300 + index * 100}ms` }}
+                        >
+                          <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl group-hover:animate-ping"></div>
+                          <div className="relative text-center">
+                            <h3 className="text-4xl font-bold text-white mb-4">{subject.name}</h3>
+                            <p className="text-white/90 mb-3 text-lg">Exam materials</p>
+                            <p className="text-white/80 text-sm">Access exam materials for {subject.name}</p>
+                          </div>
+                        </button>
+                      ));
+                    })()}
                   </div>
                   <div className="text-center">
                     <button onClick={() => setSelectedSpecialization(null)} className="text-purple-400 hover:text-purple-300 underline text-lg transition-colors">
