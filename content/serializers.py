@@ -41,7 +41,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class ExamResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExamResource
-        fields = ["id", "name", "specialization", "url"]
+        fields = ["id", "name", "specialization", "semester", "display_order", "url"]
 
 
 class SummaryResourceSerializer(serializers.ModelSerializer):

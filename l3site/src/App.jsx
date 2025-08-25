@@ -294,14 +294,14 @@ function App() {
             )}
 
 
-          </div>
+                        </div>
         );
 
       case 'playlist':
         return (
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-xl"></div>
-            <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-xl"></div>
+                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
               <h2 className="text-4xl font-bold text-white mb-6">🎬 Video Playlists</h2>
               <p className="text-gray-300 mb-8 text-lg">Discover amazing video content to boost your learning!</p>
               
@@ -327,21 +327,21 @@ function App() {
                       </button>
                     ))}
                   </div>
-                  <div className="text-center">
+                        <div className="text-center">
                     <button onClick={() => {
                       setSelectedMode(null);
                       setActiveTab('home');
                     }} className="text-purple-400 hover:text-purple-300 underline text-lg transition-colors">
                       ← Back to Home
-                    </button>
+                      </button>
                   </div>
-                </div>
+                  </div>
               ) : !selectedMajor ? (
                 <div className="space-y-8">
                   <div className="text-center mb-8">
                     <h3 className="text-2xl font-bold text-white mb-4">Choose Your Major</h3>
                     <p className="text-gray-400 text-lg">Select your major for {selectedSemester.name}</p>
-                  </div>
+                </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {majors.map((major) => (
                       <button 
@@ -364,54 +364,27 @@ function App() {
                     </button>
                   </div>
                 </div>
-                             ) : !selectedSection ? (
-                 <div className="space-y-8">
-                   <div className="text-center mb-8">
-                     <h3 className="text-2xl font-bold text-white mb-4">Choose Your Section</h3>
-                     <p className="text-gray-400 text-lg">Select your section for {selectedMajor.name}</p>
-                   </div>
-                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                     {selectedMajor.sections.map((section) => (
-                       <button 
-                         key={section.id} 
-                         onClick={() => setSelectedSection(section)} 
-                         className={`group relative overflow-hidden bg-gradient-to-br ${section.color} p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
-                       >
-                         <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
-                         <div className="relative text-center">
-                           <h3 className="text-2xl font-bold text-white mb-2">{section.name}</h3>
-                           <p className="text-white/80 text-sm">{selectedMajor.name} {section.id.toUpperCase()}</p>
-                         </div>
-                       </button>
-                     ))}
-                   </div>
-                   <div className="text-center">
-                     <button onClick={() => setSelectedMajor(null)} className="text-purple-400 hover:text-purple-300 underline text-lg transition-colors">
-                       ← Back to Major Selection
-                     </button>
-                   </div>
-                 </div>
                              ) : (
                  <div className="space-y-6">
                    <div className="flex items-center justify-between">
                      <div>
-                       <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name} {selectedSection.id.toUpperCase()}</h3>
-                       <p className="text-gray-400">Video content for your selected semester and section</p>
+                       <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name}</h3>
+                       <p className="text-gray-400">Video content for your selected semester and major</p>
                      </div>
                      <button 
-                       onClick={() => setSelectedSection(null)} 
+                       onClick={() => setSelectedMajor(null)} 
                        className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
                      >
                        ← Back
                      </button>
                    </div>
                    <YouTubeRecommendations 
-                     specialization={`${selectedMajor.id}_${selectedSection.id}`}
+                     specialization={selectedMajor.id}
                      semester={selectedSemester.id} 
                    />
                  </div>
-               )}
-            </div>
+            )}
+                      </div>
           </div>
         );
 
@@ -476,12 +449,12 @@ function App() {
                       </button>
                     ))}
                   </div>
-                  <div className="text-center">
+                        <div className="text-center">
                     <button onClick={() => setSelectedSemester(null)} className="text-blue-400 hover:text-blue-300 underline text-lg transition-colors">
                       ← Back to Semester Selection
-                    </button>
+                      </button>
                   </div>
-                </div>
+                  </div>
               ) : !selectedSection ? (
                 <div className="space-y-8">
                   <div className="text-center mb-8">
@@ -491,30 +464,30 @@ function App() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {selectedMajor.sections.map((section) => (
                       <button 
-                        key={section.id} 
-                        onClick={() => setSelectedSection(section)} 
-                        className={`group relative overflow-hidden bg-gradient-to-br ${section.color} p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
+                         key={section.id} 
+                         onClick={() => setSelectedSection(section)} 
+                         className={`group relative overflow-hidden bg-gradient-to-br ${section.color} p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
                       >
                         <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
                         <div className="relative text-center">
-                          <h3 className="text-2xl font-bold text-white mb-2">{section.name}</h3>
-                          <p className="text-white/80 text-sm">{selectedMajor.name} {section.id.toUpperCase()}</p>
+                           <h3 className="text-2xl font-bold text-white mb-2">{section.name}</h3>
+                           <p className="text-white/80 text-sm">{selectedMajor.name} {section.id.toUpperCase()}</p>
                         </div>
                       </button>
                     ))}
                   </div>
-                  <div className="text-center">
-                    <button onClick={() => setSelectedMajor(null)} className="text-blue-400 hover:text-blue-300 underline text-lg transition-colors">
-                      ← Back to Major Selection
+                   <div className="text-center">
+                     <button onClick={() => setSelectedMajor(null)} className="text-blue-400 hover:text-blue-300 underline text-lg transition-colors">
+                       ← Back to Major Selection
                     </button>
                   </div>
                 </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name} {selectedSection.id.toUpperCase()}</h3>
-                      <p className="text-gray-400">Course materials for your selected semester, major, and section</p>
+                             ) : (
+                 <div className="space-y-6">
+                   <div className="flex items-center justify-between">
+                     <div>
+                       <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name} {selectedSection.id.toUpperCase()}</h3>
+                       <p className="text-gray-400">Course materials for your selected semester, major, and section</p>
                     </div>
                     <button 
                       onClick={() => setSelectedSection(null)} 
@@ -523,10 +496,10 @@ function App() {
                       ← Back
                     </button>
                   </div>
-                                     <LessonDrives 
-                     semester={selectedSemester}
+                  <LessonDrives 
+                    semester={selectedSemester} 
                      specialization={{ id: `${selectedMajor.id}_${selectedSection.id}`, name: `${selectedMajor.name} ${selectedSection.id.toUpperCase()}` }}
-                   />
+                  />
                 </div>
               )}
             </div>
@@ -602,60 +575,60 @@ function App() {
                     </button>
                   </div>
                 </div>
-                             ) : !selectedSubject ? (
-                 <div className="space-y-8">
-                   <div className="text-center mb-8 animate-fade-in-up delay-200">
-                     <h3 className="text-2xl font-bold text-white mb-4">Choose Your Subject</h3>
+              ) : !selectedSubject ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8 animate-fade-in-up delay-200">
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Subject</h3>
                      <p className="text-gray-400 text-lg">Select your subject for {selectedSemester.name} - {selectedMajor.name}</p>
-                   </div>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                      {(() => {
                        // Filter subjects based on major type (isil vs acad)
                        const availableSubjects = subjects[selectedMajor.id] || [];
                        
                        return availableSubjects.map((subject, index) => (
-                         <button 
-                           key={subject.id} 
-                           onClick={() => setSelectedSubject(subject)} 
-                           className={`group relative overflow-hidden bg-gradient-to-br ${subject.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20 animate-fade-in-up hover:animate-pulse`}
-                           style={{ animationDelay: `${300 + index * 100}ms` }}
-                         >
-                           <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl group-hover:animate-ping"></div>
-                           <div className="relative text-center">
-                             <h3 className="text-4xl font-bold text-white mb-4">{subject.name}</h3>
-                             <p className="text-white/90 mb-3 text-lg">Exam materials</p>
-                             <p className="text-white/80 text-sm">Access exam materials for {subject.name}</p>
-                           </div>
-                         </button>
+                      <button 
+                        key={subject.id} 
+                        onClick={() => setSelectedSubject(subject)} 
+                        className={`group relative overflow-hidden bg-gradient-to-br ${subject.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20 animate-fade-in-up hover:animate-pulse`}
+                        style={{ animationDelay: `${300 + index * 100}ms` }}
+                      >
+                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl group-hover:animate-ping"></div>
+                        <div className="relative text-center">
+                          <h3 className="text-4xl font-bold text-white mb-4">{subject.name}</h3>
+                          <p className="text-white/90 mb-3 text-lg">Exam materials</p>
+                          <p className="text-white/80 text-sm">Access exam materials for {subject.name}</p>
+                        </div>
+                      </button>
                        ));
                      })()}
-                   </div>
-                   <div className="text-center">
+                  </div>
+                  <div className="text-center">
                      <button onClick={() => setSelectedMajor(null)} className="text-red-400 hover:text-red-300 underline text-lg transition-colors">
                        ← Back to Major Selection
-                     </button>
-                   </div>
-                 </div>
-               ) : (
-                 <div className="space-y-6">
-                   <div className="flex items-center justify-between">
-                     <div>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
                        <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name} - {selectedSubject.name}</h3>
                        <p className="text-gray-400">Exam materials for your selected semester, major, and subject</p>
-                     </div>
-                     <button 
-                       onClick={() => setSelectedSubject(null)} 
+                    </div>
+                    <button 
+                      onClick={() => setSelectedSubject(null)} 
                        className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-red-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
-                     >
-                       ← Back
-                     </button>
-                   </div>
-                   <LessonDrives 
+                    >
+                      ← Back
+                    </button>
+                  </div>
+                  <LessonDrives 
                      specialization={selectedMajor.id}
-                     subject={selectedSubject} 
-                   />
-                 </div>
-               )}
+                    subject={selectedSubject} 
+                  />
+                </div>
+              )}
             </div>
           </div>
         );

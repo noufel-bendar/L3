@@ -3,7 +3,7 @@ from content.models import Course, VideoPlaylist
 
 
 class Command(BaseCommand):
-    help = 'Update the video content structure according to new specifications'
+    help = 'Update the video content structure to group by major without sections'
 
     def handle(self, *args, **options):
         # First, let's clear all existing courses and playlists
@@ -11,12 +11,12 @@ class Command(BaseCommand):
         VideoPlaylist.objects.all().delete()
         Course.objects.all().delete()
         
-        # Define the new course structure with proper ordering
+        # Define the new course structure grouped by major without sections
         new_course_structure = [
-            # ACAD S5 - Order: 1-6
+            # ACAD - All sections combined
             {
                 "course_name": "Théorie des Graphes",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 1,
                 "playlists": [
@@ -27,7 +27,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Système d'Exploitation 2",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 2,
                 "playlists": [
@@ -37,7 +37,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Réseaux",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 3,
                 "playlists": [
@@ -48,7 +48,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Génie Logiciel 1",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 4,
                 "playlists": [
@@ -59,7 +59,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Compilation",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 5,
                 "playlists": [
@@ -69,7 +69,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Anglais 3",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 6,
                 "playlists": [
@@ -77,10 +77,10 @@ class Command(BaseCommand):
                 ]
             },
             
-            # ACAD S6 - Order: 1-4
+            # ACAD S6
             {
                 "course_name": "Programmation Web",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s6",
                 "display_order": 1,
                 "playlists": [
@@ -90,30 +90,30 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Doc STR",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s6",
                 "display_order": 2,
                 "playlists": []
             },
             {
                 "course_name": "PFP",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s6",
                 "display_order": 3,
                 "playlists": []
             },
             {
                 "course_name": "Admin",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s6",
                 "display_order": 4,
                 "playlists": []
             },
             
-            # ISIL S5 - Order: 1-7
+            # ISIL S5 - All sections combined
             {
                 "course_name": "Compilation",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 1,
                 "playlists": [
@@ -123,7 +123,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Réseaux",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 2,
                 "playlists": [
@@ -133,7 +133,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Génie Logiciel 2",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 3,
                 "playlists": [
@@ -142,7 +142,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Système d'Exploitation 2",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 4,
                 "playlists": [
@@ -152,7 +152,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Base de Données 2",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 5,
                 "playlists": [
@@ -161,7 +161,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Système d'Informatique 2",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 6,
                 "playlists": [
@@ -170,17 +170,17 @@ class Command(BaseCommand):
                 ]
             },
             
-            # ISIL S6 - Order: 1-4
+            # ISIL S6
             {
                 "course_name": "ORAD",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s6",
                 "display_order": 1,
                 "playlists": []
             },
             {
                 "course_name": "Réseaux 2",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s6",
                 "display_order": 2,
                 "playlists": [
@@ -189,14 +189,14 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "PFE",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s6",
                 "display_order": 3,
                 "playlists": []
             },
             {
                 "course_name": "Génie Logiciel 3",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s6",
                 "display_order": 4,
                 "playlists": [

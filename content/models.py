@@ -49,6 +49,10 @@ class Course(models.Model):
         S6 = "s6", "S6"
 
     class Specialization(models.TextChoices):
+        # Major-only options (for videos)
+        ACAD = "acad", "ACAD"
+        ISIL = "isil", "ISIL"
+        # Section-specific options (for course materials)
         ISIL_A = "isil_a", "ISIL A"
         ISIL_B = "isil_b", "ISIL B"
         ISIL_C = "isil_c", "ISIL C"
@@ -79,7 +83,15 @@ class VideoPlaylist(models.Model):
 
 
 class ExamResource(models.Model):
+    class Semester(models.TextChoices):
+        S5 = "s5", "S5"
+        S6 = "s6", "S6"
+
     class Specialization(models.TextChoices):
+        # Major-only options (for exams)
+        ACAD = "acad", "ACAD"
+        ISIL = "isil", "ISIL"
+        # Section-specific options (for course materials)
         ISIL_A = "isil_a", "ISIL A"
         ISIL_B = "isil_b", "ISIL B"
         ISIL_C = "isil_c", "ISIL C"
@@ -89,14 +101,16 @@ class ExamResource(models.Model):
 
     name = models.CharField(max_length=255)
     specialization = models.CharField(max_length=16, choices=Specialization.choices)
+    semester = models.CharField(max_length=8, choices=Semester.choices, default="s5")
     url = models.URLField()
+    display_order = models.PositiveIntegerField(default=0, help_text="Order in which exams should appear")
 
     class Meta:
-        unique_together = ("name", "specialization")
-        ordering = ["specialization", "name"]
+        unique_together = ("name", "specialization", "semester")
+        ordering = ["specialization", "semester", "display_order", "name"]
 
     def __str__(self) -> str:
-        return f"{self.name} ({self.specialization})"
+        return f"{self.name} ({self.specialization} {self.semester})"
 
 
 class SummaryResource(models.Model):
