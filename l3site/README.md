@@ -1,122 +1,166 @@
-# USTHB Informatique L3 LMD
+# USTHB L3 Learning Platform Frontend
 
-A comprehensive learning platform for third-year computer science students at USTHB (University of Science and Technology Houari Boumediene).
+A modern React-based frontend for the USTHB L3 Learning Platform, fully integrated with the Django backend API.
 
 ## 🚀 Features
 
-- **Course Materials**: Access organized course materials by year and semester
-- **Video Content**: Watch curated video content by specialization and semester
-- **Summaries**: Quick access to course summaries and notes
-- **Discord Community**: Join the student Discord server
-- **Responsive Design**: Works perfectly on all devices
+- **Full Backend Integration**: All data is fetched from the Django backend API
+- **Modern UI/UX**: Beautiful, responsive design with smooth animations
+- **Real-time Data**: Dynamic content loading from the backend
+- **Error Handling**: Comprehensive error handling and loading states
+- **Mobile Responsive**: Optimized for all device sizes
 
-## 🛠️ Tech Stack
+## 🔗 Backend Integration
 
-- **Frontend**: React 19 + Vite
+The frontend is fully dependent on the backend API hosted at `https://l3-dkrz.onrender.com`. All data including:
+
+- Course materials and drive links
+- Video playlists and courses
+- Exam resources
+- Summaries
+- Site settings
+
+is fetched from the backend API endpoints.
+
+### API Endpoints Used
+
+- `/api/drive-links/` - Course drive links by year/semester/specialization
+- `/api/courses/` - Course information with video playlists
+- `/api/exam-resources/` - Exam materials by specialization
+- `/api/summaries/` - Study summaries and notes
+- `/api/site-settings/` - Site configuration
+
+## 🛠️ Technology Stack
+
+- **Frontend**: React 18 with Vite
 - **Styling**: Tailwind CSS
+- **State Management**: React Hooks
+- **API**: Fetch API with error handling
 - **Deployment**: Vercel
-- **Icons**: Custom SVG icons
 
 ## 📦 Installation
 
-1. Clone the repository:
-```bash
-git clone <your-repo-url>
-cd l3site
-```
-
+1. Clone the repository
 2. Install dependencies:
-```bash
-npm install
+   ```bash
+   npm install
+   ```
+
+3. Configure environment variables (optional):
+   ```bash
+   # Create .env file
+   VITE_API_BASE=https://l3-dkrz.onrender.com/api
+   ```
+
+4. Start development server:
+   ```bash
+   npm run dev
+   ```
+
+## 🏗️ Project Structure
+
+```
+src/
+├── components/
+│   ├── LessonDrives.jsx      # Main content component
+│   ├── Summaries.jsx         # Summaries display
+│   ├── YouTubeRecommendations.jsx # Video recommendations
+│   └── CharityPopup.jsx      # Charity reminder popup
+├── api.js                    # API configuration and utilities
+├── App.jsx                   # Main application component
+└── main.jsx                  # Application entry point
 ```
 
-3. Start the development server:
-```bash
-npm run dev
-```
+## 🔧 Configuration
 
-4. Open [http://localhost:5173](http://localhost:5173) in your browser.
+### API Base URL
 
-## 🚀 Deployment on Vercel
+The frontend automatically connects to the backend at `https://l3-dkrz.onrender.com/api`. You can override this by setting the `VITE_API_BASE` environment variable.
 
-### Option 1: Deploy via Vercel CLI
+### Error Handling
 
-1. Install Vercel CLI:
-```bash
-npm i -g vercel
-```
+The application includes comprehensive error handling:
+- Network connectivity issues
+- API endpoint failures
+- Data loading errors
+- User-friendly error messages with retry options
 
-2. Login to Vercel:
-```bash
-vercel login
-```
+## 🚀 Deployment
 
-3. Deploy:
-```bash
-vercel
-```
+The frontend is configured for deployment on Vercel:
 
-### Option 2: Deploy via GitHub Integration
+1. Connect your repository to Vercel
+2. Set environment variables if needed
+3. Deploy automatically on push to main branch
 
-1. Push your code to GitHub
-2. Go to [vercel.com](https://vercel.com)
-3. Click "New Project"
-4. Import your GitHub repository
-5. Vercel will automatically detect it's a Vite project
-6. Click "Deploy"
+## 📱 Features
 
-### Option 3: Deploy via Vercel Dashboard
+### Home Page
+- Resource selection (Drives, Videos, Exams, Summaries)
+- Specialization and semester selection
+- Dynamic content based on backend data
 
-1. Go to [vercel.com](https://vercel.com)
-2. Click "New Project"
-3. Choose "Upload" and drag your project folder
-4. Vercel will automatically build and deploy
+### Course Materials
+- Google Drive links organized by year/semester/specialization
+- Real-time data from backend
+- Responsive grid layout
 
-## ⚙️ Configuration
+### Video Content
+- Course-based video playlists
+- YouTube integration
+- Specialization-specific content
 
-The project includes a `vercel.json` configuration file that:
-- Sets the build command to `npm run build`
-- Configures the output directory to `dist`
-- Sets up SPA routing with fallback to `index.html`
-- Optimizes caching for static assets
+### Exam Resources
+- Exam materials by subject and specialization
+- Backend-driven content
+- Easy access to study resources
 
-## 📱 PWA Features
+### Summaries
+- Study summaries and notes
+- Dynamic loading from backend
+- Clean, organized display
 
-The application includes Progressive Web App features:
-- Web manifest for app-like experience
-- Custom favicon and icons
-- Theme color configuration
-- Responsive design
+## 🔄 Data Flow
 
-## 🎨 Customization
+1. **Initial Load**: App fetches academic years and exam resources
+2. **User Selection**: Based on user choices, specific API calls are made
+3. **Content Display**: Data is rendered with loading and error states
+4. **Real-time Updates**: Content updates automatically when backend data changes
 
-### Colors
-The application uses a computer science-themed color palette:
-- Primary: Cyan to Blue gradient (`#06b6d4` to `#3b82f6`)
-- Secondary: Purple to Pink gradient
-- Accent: Emerald to Teal gradient
+## 🛡️ Error Handling
 
-### Favicon
-The custom favicon features:
-- Computer monitor with code lines
-- USTHB branding
-- Gradient background matching the theme
+- **Loading States**: Spinner animations during data fetching
+- **Error States**: User-friendly error messages with retry buttons
+- **Fallback Content**: Graceful degradation when data is unavailable
+- **Network Issues**: Automatic retry mechanisms
+
+## 🎨 UI/UX Features
+
+- **Modern Design**: Gradient backgrounds and glassmorphism effects
+- **Smooth Animations**: CSS transitions and hover effects
+- **Responsive Layout**: Mobile-first design approach
+- **Accessibility**: ARIA labels and keyboard navigation
+- **Dark Theme**: Optimized for dark mode viewing
+
+## 🔗 Backend Dependencies
+
+The frontend requires the following backend models and endpoints:
+
+- `CourseDriveLink` - Drive links for course materials
+- `Course` - Course information with video playlists
+- `VideoPlaylist` - YouTube playlists for courses
+- `ExamResource` - Exam materials by specialization
+- `SummaryResource` - Study summaries
+- `SiteSettings` - Site configuration
 
 ## 📄 License
 
-This project is created for educational purposes at USTHB.
+This project is part of the USTHB L3 Learning Platform.
 
-## 👨‍💻 Author
+## 👨‍💻 Developer
 
-**Bendar Noufel**
-- Email: bendarnoufel@gmail.com
-- Portfolio: [https://noufel-bendar.vercel.app/](https://noufel-bendar.vercel.app/)
-- Discord: [https://discord.gg/Ef5eeQQpnk](https://discord.gg/Ef5eeQQpnk)
-
-## 🤝 Contributing
-
-This is a learning platform for USTHB students. For suggestions or improvements, please contact the author.
+Built by **Bendar Noufel** - Computer Science L3 LMD Student at USTHB.
 
 ---
 
-Made with ❤️ for the USTHB Computer Science community
+*This frontend is fully integrated with the Django backend and provides a seamless learning experience for USTHB L3 students.*

@@ -30,21 +30,56 @@ function App() {
   ];
 
   const [subjects, setSubjects] = useState({ isil: [], acad: [] });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function bootstrap() {
+      setLoading(true);
+      setError(null);
+      
       try {
         const driveLinks = await getJson('/drive-links/');
         const years = [...new Set(driveLinks.map(link => `${link.start_year}-${link.end_year}`))];
         if (years.length) setAcademicYears(years);
-        const examsIsil = await getJson('/exam-resources/?specialization=isil');
-        const examsAcad = await getJson('/exam-resources/?specialization=acad');
+        
+        // Fetch exam resources for each specialization
+        const specializations = ['isil_a', 'isil_b', 'isil_c', 'acad_a', 'acad_b', 'acad_c'];
+        const allExamResources = {};
+        
+        for (const spec of specializations) {
+          try {
+            const resources = await getJson(`/exam-resources/?specialization=${spec}`);
+            allExamResources[spec] = resources.map(e => ({ 
+              id: e.name.toLowerCase().replace(/\s+/g,'-'), 
+              name: e.name, 
+              url: e.url, 
+              color: e.color || 'from-blue-500 to-indigo-600' 
+            }));
+          } catch (err) {
+            console.warn(`Failed to fetch exam resources for ${spec}:`, err);
+            allExamResources[spec] = [];
+          }
+        }
+        
+        // Group by specialization type (isil vs acad)
         setSubjects({
-          isil: examsIsil.map(e => ({ id: e.name.toLowerCase().replace(/\s+/g,'-'), name: e.name, url: e.url, color: e.color || 'from-blue-500 to-indigo-600' })),
-          acad: examsAcad.map(e => ({ id: e.name.toLowerCase().replace(/\s+/g,'-'), name: e.name, url: e.url, color: e.color || 'from-pink-500 to-indigo-600' })),
+          isil: [
+            ...allExamResources.isil_a || [],
+            ...allExamResources.isil_b || [],
+            ...allExamResources.isil_c || []
+          ],
+          acad: [
+            ...allExamResources.acad_a || [],
+            ...allExamResources.acad_b || [],
+            ...allExamResources.acad_c || []
+          ]
         });
       } catch (e) {
-        // keep defaults if backend not running
+        console.error('Error loading initial data:', e);
+        setError('Failed to load data from the server. Please check your connection and try again.');
+      } finally {
+        setLoading(false);
       }
     }
     bootstrap();
@@ -58,6 +93,46 @@ function App() {
     { id: 'summaries', name: 'Summaries' },
     { id: 'contact', name: 'Contact Me' }
   ];
+
+  // Show loading state for initial data
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block p-6 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full mb-6 animate-spin">
+            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-4">Loading USTHB L3 Platform</h2>
+          <p className="text-gray-400 text-lg">Connecting to the server...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto">
+          <div className="inline-block p-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-full mb-6">
+            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-4">Connection Error</h2>
+          <p className="text-red-400 text-lg mb-6">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-8 py-4 rounded-xl hover:from-red-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
+          >
+            Retry Connection
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const renderContent = () => {
     switch (activeTab) {

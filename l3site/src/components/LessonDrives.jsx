@@ -5,63 +5,82 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
   const [driveLinks, setDriveLinks] = useState(null);
   const [courses, setCourses] = useState([]);
   const [examResources, setExamResources] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function load() {
-      // Drives by academic year/semester/specialization
-      if (year && semester) {
-        // Fetch all drive links and group them locally by display year
-        const links = await getJson('/drive-links/');
-        const grouped = {};
-        links.forEach((l) => {
-          const display = `${l.start_year}-${l.end_year}`;
-          if (!grouped[display]) grouped[display] = { s5: {}, s6: {} };
-          grouped[display][l.semester][l.specialization] = l.url;
-        });
-        setDriveLinks(grouped);
-      }
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // Drives by academic year/semester/specialization
+        if (year && semester) {
+          // Fetch all drive links and group them locally by display year
+          const links = await getJson('/drive-links/');
+          const grouped = {};
+          links.forEach((l) => {
+            const display = `${l.start_year}-${l.end_year}`;
+            if (!grouped[display]) grouped[display] = { s5: {}, s6: {} };
+            grouped[display][l.semester][l.specialization] = l.url;
+          });
+          setDriveLinks(grouped);
+        }
 
-      // Videos courses for specialization+semester
-      if (specialization && semester && !subject) {
-        const cs = await getJson(`/courses/?specialization=${specialization.id}&semester=${semester.id}`);
-        setCourses(cs.map((c) => ({ id: c.id, name: c.name, videoPlaylists: c.videoPlaylists })));
-      }
+        // Videos courses for specialization+semester
+        if (specialization && semester && !subject) {
+          const cs = await getJson(`/courses/?specialization=${specialization.id}&semester=${semester.id}`);
+          setCourses(cs.map((c) => ({ id: c.id, name: c.name, videoPlaylists: c.videoPlaylists })));
+        }
 
-      // Exam resources by specialization
-      if (specialization && subject) {
-        const ex = await getJson(`/exam-resources/?specialization=${specialization.id}`);
-        setExamResources(ex);
+        // Exam resources by specialization
+        if (specialization && subject) {
+          const ex = await getJson(`/exam-resources/?specialization=${specialization.id}`);
+          setExamResources(ex);
+        }
+      } catch (err) {
+        console.error('Error loading data:', err);
+        setError('Failed to load data from the server. Please check your connection and try again.');
+      } finally {
+        setLoading(false);
       }
     }
     load();
   }, [year, semester, specialization, subject]);
 
-  // Exam resources by specialization
-  const examLinks = {
-    isil_a: [
-      { name: 'Compilation', url: 'https://example.com/isil_a_compilation', color: 'from-cyan-500 to-blue-500' },
-      { name: 'Réseaux', url: 'https://example.com/isil_a_reseaux', color: 'from-blue-500 to-indigo-500' }
-    ],
-    isil_b: [
-      { name: 'Compilation', url: 'https://example.com/isil_b_compilation', color: 'from-indigo-500 to-purple-500' },
-      { name: 'Réseaux', url: 'https://example.com/isil_b_reseaux', color: 'from-purple-500 to-pink-500' }
-    ],
-    isil_c: [
-      { name: 'Compilation', url: 'https://example.com/isil_c_compilation', color: 'from-indigo-500 to-purple-500' }
-    ],
-    acad_a: [
-      { name: 'Théorie des Graphes', url: 'https://example.com/acad_a_graphes', color: 'from-purple-500 to-pink-500' },
-      { name: 'Réseaux', url: 'https://example.com/acad_a_reseaux', color: 'from-pink-500 to-rose-500' }
-    ],
-    acad_b: [
-      { name: 'Théorie des Graphes', url: 'https://example.com/acad_b_graphes', color: 'from-rose-500 to-red-500' }
-    ],
-    acad_c: [
-      { name: 'Compilation', url: 'https://example.com/acad_c_compilation', color: 'from-red-500 to-pink-500' }
-    ]
-  };
+  // Loading state
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <div className="inline-block p-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full mb-4 animate-spin">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </div>
+        <p className="text-gray-400 text-xl">Loading data...</p>
+      </div>
+    );
+  }
 
-  // Course data is now fetched from the backend API in the useEffect above
+  // Error state
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <div className="inline-block p-4 bg-gradient-to-r from-red-500 to-pink-500 rounded-full mb-4">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <p className="text-red-400 text-xl mb-4">{error}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-red-500 hover:to-pink-500 transition-all duration-300"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   // Determine if this is Drives flow, Videos flow, or Exams flow
   const isDrivesFlow = year && semester && !specialization;
@@ -76,7 +95,13 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
     if (!semesterData) {
       return (
         <div className="text-center py-12">
+          <div className="inline-block p-4 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full mb-4">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
           <p className="text-gray-400 text-xl">No drive links available for {year} - {semester.name}</p>
+          <p className="text-gray-500 text-sm mt-2">Please check back later or contact the administrator.</p>
         </div>
       );
     }
@@ -168,6 +193,20 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
     // Videos flow: Display course list with video playlists
     // courses state is already populated from the backend API in useEffect
 
+    if (!courses.length) {
+      return (
+        <div className="text-center py-12">
+          <div className="inline-block p-4 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full mb-4">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <p className="text-gray-400 text-xl">No video courses available for {specialization?.name} - {semester?.name}</p>
+          <p className="text-gray-500 text-sm mt-2">Please check back later or contact the administrator.</p>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-8">
         {/* Header Card */}
@@ -215,7 +254,7 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
                 </div>
 
                 {/* Video Playlists Section */}
-                {course.videoPlaylists && course.videoPlaylists.length > 0 && (
+                {course.videoPlaylists && course.videoPlaylists.length > 0 ? (
                   <div className="space-y-3">
                     <div className="space-y-2">
                       {course.videoPlaylists.map((playlist, index) => (
@@ -237,28 +276,37 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
                       ))}
                     </div>
                   </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-gray-500 text-sm">No video playlists available for this course yet.</p>
+                  </div>
                 )}
               </div>
             </div>
           ))}
         </div>
-
-
       </div>
     );
   }
 
   if (isExamsFlow) {
     // Exams flow: Display exam materials for the selected subject
-    const examSubject = examLinks[specialization?.id]?.find(exam => 
+    // Find the exam resource that matches the selected subject
+    const examResource = examResources.find(exam => 
       exam.name.toLowerCase().includes(subject.name.toLowerCase()) ||
       subject.name.toLowerCase().includes(exam.name.toLowerCase())
     );
 
-    if (!examSubject) {
+    if (!examResource) {
       return (
         <div className="text-center py-12">
+          <div className="inline-block p-4 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full mb-4">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
           <p className="text-gray-400 text-xl">No exam materials available for {subject.name}</p>
+          <p className="text-gray-500 text-sm mt-2">Please check back later or contact the administrator.</p>
         </div>
       );
     }
@@ -277,15 +325,15 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-white">
-                  Exam Materials - {subject.name}
+                  Exam Materials - {examResource.name}
                 </h3>
                 <p className="text-yellow-200 text-lg">
-                  Access exam materials and past papers for {subject.name}
+                  Access exam materials and past papers for {examResource.name}
                 </p>
               </div>
             </div>
             <p className="text-gray-300 text-lg leading-relaxed">
-              Find exam materials, past papers, and study resources for {subject.name} in {specialization?.name} specialization.
+              Find exam materials, past papers, and study resources for {examResource.name} in {specialization?.name} specialization.
             </p>
           </div>
         </div>
@@ -293,20 +341,20 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
         {/* Exam Materials Card */}
         <div className="relative overflow-hidden bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
           <div className="flex items-center mb-6">
-            <div className={`p-3 bg-gradient-to-r ${examSubject.color} rounded-xl mr-4`}>
+            <div className="p-3 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl mr-4">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-2xl font-bold text-white">{examSubject.name}</h3>
+              <h3 className="text-2xl font-bold text-white">{examResource.name}</h3>
               <p className="text-gray-300">Exam materials and study resources</p>
             </div>
           </div>
           
           {/* Exam Link */}
           <a
-            href={examSubject.url}
+            href={examResource.url}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center p-4 bg-gradient-to-r from-yellow-600 to-orange-600 text-white font-semibold rounded-xl hover:from-yellow-500 hover:to-orange-500 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-yellow-500/25"

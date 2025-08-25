@@ -8,11 +8,15 @@ const Summaries = () => {
 
   useEffect(() => {
     async function load() {
+      setLoading(true);
+      setError(null);
+      
       try {
         const res = await getJson('/summaries/');
         setItems(res);
       } catch (e) {
-        setError('Failed to load summaries');
+        console.error('Error loading summaries:', e);
+        setError('Failed to load summaries from the server. Please check your connection and try again.');
       } finally {
         setLoading(false);
       }
@@ -23,6 +27,11 @@ const Summaries = () => {
   if (loading) {
     return (
       <div className="text-center py-12">
+        <div className="inline-block p-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mb-4 animate-spin">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </div>
         <p className="text-gray-400 text-xl">Loading summaries...</p>
       </div>
     );
@@ -31,7 +40,18 @@ const Summaries = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-400 text-xl">{error}</p>
+        <div className="inline-block p-4 bg-gradient-to-r from-red-500 to-pink-500 rounded-full mb-4">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <p className="text-red-400 text-xl mb-4">{error}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-red-500 hover:to-pink-500 transition-all duration-300"
+        >
+          Retry
+        </button>
       </div>
     );
   }
@@ -39,7 +59,13 @@ const Summaries = () => {
   if (!items.length) {
     return (
       <div className="text-center py-12">
+        <div className="inline-block p-4 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full mb-4">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        </div>
         <p className="text-gray-400 text-xl">No summaries available yet.</p>
+        <p className="text-gray-500 text-sm mt-2">Summaries will appear here once they are added to the system.</p>
       </div>
     );
   }
