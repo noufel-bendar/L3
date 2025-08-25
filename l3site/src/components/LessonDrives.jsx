@@ -14,7 +14,7 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
         const links = await getJson('/drive-links/');
         const grouped = {};
         links.forEach((l) => {
-          const display = `${l.academic_year.start_year}/${l.academic_year.end_year}`;
+          const display = `${l.academic_year.start_year}-${l.academic_year.end_year}`;
           if (!grouped[display]) grouped[display] = { s5: {}, s6: {} };
           grouped[display][l.semester][l.specialization] = l.url;
         });

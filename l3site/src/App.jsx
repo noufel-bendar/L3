@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import LessonDrives from './components/LessonDrives';
 import YouTubeRecommendations from './components/YouTubeRecommendations';
 import Summaries from './components/Summaries';
+import CharityPopup from './components/CharityPopup';
 import { getJson } from './api';
 
 function App() {
@@ -17,7 +18,7 @@ function App() {
     { id: 'isil', name: 'ISIL', fullName: 'Ingénierie Système d\'Information et Logiciels (ISIL)', description: 'Information Systems and Software Engineering', color: 'from-cyan-500 to-blue-500', hoverColor: 'hover:from-cyan-600 hover:to-blue-600' }
   ];
 
-  const [academicYears, setAcademicYears] = useState(['2021/2022']);
+  const [academicYears, setAcademicYears] = useState([]);
 
   const semesters = [
     { id: 's5', name: 'S5', fullName: 'Semester 5', description: 'Fifth Semester Courses' },
@@ -30,7 +31,7 @@ function App() {
     async function bootstrap() {
       try {
         const years = await getJson('/academic-years/');
-        const formatted = years.map(y => `${y.start_year}/${y.end_year}`);
+        const formatted = years.map(y => `${y.start_year}-${y.end_year}`);
         if (formatted.length) setAcademicYears(formatted);
         const examsIsil = await getJson('/exam-resources/?specialization=isil');
         const examsAcad = await getJson('/exam-resources/?specialization=acad');
@@ -843,6 +844,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black relative overflow-hidden">
+      <CharityPopup />
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-20 -right-20 sm:-top-40 sm:-right-40 w-40 h-40 sm:w-80 sm:h-80 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
