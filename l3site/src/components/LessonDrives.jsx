@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LessonDrives = ({ specialization, year, semester }) => {
+const LessonDrives = ({ specialization, year, semester, subject }) => {
   // Google Drive links for Drives flow (Year → Semester → Courses)
   const driveLinks = {
     '2021/2022': {
@@ -61,6 +61,69 @@ const LessonDrives = ({ specialization, year, semester }) => {
         'isil_b': 'https://drive.google.com/drive/u/1/folders/1MB_VIIMEGx43a38uqrPNj8x__issuhuS'
       }
     }
+  };
+
+  // Exam links for both specializations
+  const examLinks = {
+    isil: [
+      { 
+        name: 'Génie Logiciel 2', 
+        url: 'https://drive.google.com/drive/folders/1jIsqQ0BkFxTPmuwkMdz4jHWKFmv-4CGP',
+        color: 'from-blue-500 to-indigo-500'
+      },
+      { 
+        name: 'Système d\'Exploitation 2', 
+        url: 'https://drive.google.com/drive/folders/1Meq9p2v08Vc-vljtDHbp8XzpoIq7CEL1',
+        color: 'from-green-500 to-emerald-500'
+      },
+      { 
+        name: 'Base de Données 2', 
+        url: 'https://drive.google.com/drive/folders/1okK0QiXtTTHmdGeFDTcfUxI4AZ5qNq6_',
+        color: 'from-purple-500 to-pink-500'
+      },
+      { 
+        name: 'Système d\'Informatique 2', 
+        url: 'https://drive.google.com/drive/folders/1qxTYiMMlvOcVrUOl2zWVuMHxHulS-0qQ',
+        color: 'from-orange-500 to-red-500'
+      },
+      { 
+        name: 'Réseaux 1', 
+        url: 'https://drive.google.com/drive/folders/1yoq6V6W0FvktJ4RgjO_3uhRdJEwJwvg0',
+        color: 'from-cyan-500 to-blue-500'
+      },
+      { 
+        name: 'Compilation', 
+        url: 'https://drive.google.com/drive/folders/1Lx-yQvpCv7T9b-8XJflRGxG7tS3cKLd2',
+        color: 'from-indigo-500 to-purple-500'
+      }
+    ],
+    acad: [
+      { 
+        name: 'Théorie de Graphe', 
+        url: 'https://drive.google.com/drive/folders/1bk1WqjIljIUKrYqpIo7kctetD6ixNjXq',
+        color: 'from-emerald-500 to-teal-500'
+      },
+      { 
+        name: 'Système d\'Exploitation 2', 
+        url: 'https://drive.google.com/drive/folders/1Meq9p2v08Vc-vljtDHbp8XzpoIq7CEL1',
+        color: 'from-green-500 to-emerald-500'
+      },
+      { 
+        name: 'Réseaux', 
+        url: 'https://drive.google.com/drive/folders/1yoq6V6W0FvktJ4RgjO_3uhRdJEwJwvg0',
+        color: 'from-cyan-500 to-blue-500'
+      },
+      { 
+        name: 'Génie Logiciel', 
+        url: 'https://drive.google.com/drive/folders/1F69Eif1Hyp5ubziUBCWm_O_TzVIkGWV_',
+        color: 'from-blue-500 to-indigo-500'
+      },
+      { 
+        name: 'Compilation', 
+        url: 'https://drive.google.com/drive/folders/1Lx-yQvpCv7T9b-8XJflRGxG7tS3cKLd2',
+        color: 'from-indigo-500 to-purple-500'
+      }
+    ]
   };
 
   // Course lists for Videos flow (Specialization → Semester → Courses)
@@ -203,9 +266,10 @@ const LessonDrives = ({ specialization, year, semester }) => {
     }
   };
 
-  // Determine if this is Drives flow or Videos flow
+  // Determine if this is Drives flow, Videos flow, or Exams flow
   const isDrivesFlow = year && semester && !specialization;
-  const isVideosFlow = specialization && semester;
+  const isVideosFlow = specialization && semester && !subject;
+  const isExamsFlow = specialization && subject;
 
   if (isDrivesFlow) {
     // Drives flow: Display Google Drive links for each specialization
@@ -379,6 +443,84 @@ const LessonDrives = ({ specialization, year, semester }) => {
               </div>
             </div>
           ))}
+        </div>
+
+
+      </div>
+    );
+  }
+
+  if (isExamsFlow) {
+    // Exams flow: Display exam materials for the selected subject
+    const examSubject = examLinks[specialization?.id]?.find(exam => 
+      exam.name.toLowerCase().includes(subject.name.toLowerCase()) ||
+      subject.name.toLowerCase().includes(exam.name.toLowerCase())
+    );
+
+    if (!examSubject) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-gray-400 text-xl">No exam materials available for {subject.name}</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-8">
+        {/* Header Card */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-yellow-600/20 to-orange-600/20 rounded-2xl p-6 border border-yellow-500/30">
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/0 to-orange-600/0 hover:from-yellow-600/10 hover:to-orange-600/10 transition-all duration-300"></div>
+          <div className="relative">
+            <div className="flex items-center mb-4">
+              <div className="p-3 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl mr-4">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-white">
+                  Exam Materials - {subject.name}
+                </h3>
+                <p className="text-yellow-200 text-lg">
+                  Access exam materials and past papers for {subject.name}
+                </p>
+              </div>
+            </div>
+            <p className="text-gray-300 text-lg leading-relaxed">
+              Find exam materials, past papers, and study resources for {subject.name} in {specialization?.name} specialization.
+            </p>
+          </div>
+        </div>
+        
+        {/* Exam Materials Card */}
+        <div className="relative overflow-hidden bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+          <div className="flex items-center mb-6">
+            <div className={`p-3 bg-gradient-to-r ${examSubject.color} rounded-xl mr-4`}>
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold text-white">{examSubject.name}</h3>
+              <p className="text-gray-300">Exam materials and study resources</p>
+            </div>
+          </div>
+          
+          {/* Exam Link */}
+          <a
+            href={examSubject.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center p-4 bg-gradient-to-r from-yellow-600 to-orange-600 text-white font-semibold rounded-xl hover:from-yellow-500 hover:to-orange-500 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-yellow-500/25"
+          >
+            <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </svg>
+            Access Exam Materials
+            <svg className="w-5 h-5 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
         </div>
       </div>
     );
