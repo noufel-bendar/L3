@@ -1,130 +1,40 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { getJson } from '../api';
 
 const LessonDrives = ({ specialization, year, semester, subject }) => {
-  // Google Drive links for Drives flow (Year → Semester → Courses)
-  const driveLinks = {
-    '2021/2022': {
-      s5: {
-        'isil_b': 'https://drive.google.com/drive/folders/19E3UTHa5JKc76IrjcCdMUR99MPEDFduq',
-        'isil_a': 'https://drive.google.com/drive/folders/1jdOPlwaQ5jxUZ4NXJv8OLAuajb12NnNy',
-        'acad_a': 'https://drive.google.com/drive/folders/1DRxbFQExfKqHGxXeIqsnJ-kMjqXZlJJD',
-        'acad_c': 'https://drive.google.com/drive/folders/1g9PZMLbk_F-PYiYfNyAMJhyOhoRcotC4'
-      },
-      s6: {
-        'isil_b': 'https://drive.google.com/drive/folders/19h6DYl-Q_TprrWEBOx0j9XWmhOodmwmi',
-        'isil_a': 'https://drive.google.com/drive/folders/1PtUPmXNOH0TbrZlY-GL6n61vswwXDL7-',
-        'acad_c': 'https://drive.google.com/drive/folders/1ELvsGQPzZPXBbezUW86uug0HQ5hSPGNB'
+  const [driveLinks, setDriveLinks] = useState(null);
+  const [courses, setCourses] = useState([]);
+  const [examResources, setExamResources] = useState([]);
+
+  useEffect(() => {
+    async function load() {
+      // Drives by academic year/semester/specialization
+      if (year && semester) {
+        // Fetch all drive links and group them locally by display year
+        const links = await getJson('/drive-links/');
+        const grouped = {};
+        links.forEach((l) => {
+          const display = `${l.academic_year.start_year}/${l.academic_year.end_year}`;
+          if (!grouped[display]) grouped[display] = { s5: {}, s6: {} };
+          grouped[display][l.semester][l.specialization] = l.url;
+        });
+        setDriveLinks(grouped);
       }
-    },
-    '2022/2023': {
-      s5: {
-        'isil_b': 'https://drive.google.com/drive/folders/1fH5ZBlv96QyJeRw0czTIB5gswQ5oFexd',
-        'isil_a': 'https://drive.google.com/drive/folders/1VBHs69Mf2Hm9RwiUhPCr0cKoAf8KF_bq',
-        'acad_c': 'https://drive.google.com/drive/folders/1jRLsYlc-m8P3JjmFqxfS7X5UCstytLth',
-        'acad_b': 'https://drive.google.com/drive/folders/1BGDxUidWkErbyb6jhCGrs73AgbNpvWIQ',
-        'acad_a': 'https://drive.google.com/drive/folders/1RgQEEb2FlweRhmAOfyH5eiZ_yK7-c2VI'
-      },
-      s6: {
-        'isil_b': 'https://drive.google.com/drive/folders/1aMizeKw54M2SXW_djQBI_sa7laE4Wm7V',
-        'isil_a': 'https://drive.google.com/drive/folders/1JcoibMvex-5Y4WXltl0zxIrQNcmLcNUz',
-        'acad_c': 'https://drive.google.com/drive/folders/13cSKvyvZLB2E7anqXimyRJxA8oNDA6_v',
-        'acad_b': 'https://drive.google.com/drive/folders/1Bm9nk7-GzK_aFpk4fbzp-q3bWJWVPzUH',
-        'acad_a': 'https://drive.google.com/drive/folders/12J6HPnqySKj8bW45uIdANPKKfnyJ0hnE'
+
+      // Videos courses for specialization+semester
+      if (specialization && semester && !subject) {
+        const cs = await getJson(`/courses/?specialization=${specialization.id}&semester=${semester.id}`);
+        setCourses(cs.map((c) => ({ id: c.id, name: c.name, videoPlaylists: c.videoPlaylists })));
       }
-    },
-    '2023/2024': {
-      s5: {
-        'isil_b': 'https://drive.google.com/drive/folders/1N69-KxGG1xhvK5bRGEyO12EWh-E1RXTd',
-        'isil_a': 'https://drive.google.com/drive/folders/1TWbmp_wjwx6PIy2DTgI5uLUu755BJ0dj',
-        'acad_c': 'https://drive.google.com/drive/folders/1RL2jJcStgQ_pFrYJG90elGVU7S7Ow1gX',
-        'acad_b': 'https://drive.google.com/drive/folders/1-9sNRynfcUO31LJU_nGNg-V7C0rV9Tdd',
-        'acad_a': 'https://drive.google.com/drive/folders/1ITieJY22_M-OL-bEGPVVbGXaiMkBJKo2'
-      },
-      s6: {
-        'isil_b': 'https://drive.google.com/drive/folders/1N6LsIUqDGtyrYFKphr-NsJVdAip0g0oX',
-        'isil_a': 'https://drive.google.com/drive/folders/1nXWjTRWoM8bBQ3I-K1TuNm2fuoK2ccIR',
-        'acad_c': 'https://drive.google.com/drive/folders/1fpT9LIn5RK5V-85iM49YFAZ9uHJUL8mN',
-        'acad_b': 'https://drive.google.com/drive/folders/1s8ZhVPD8nBbmhqFIHQSWRW7hP-jdlmhY',
-        'acad_a': 'https://drive.google.com/drive/folders/1HyK6DQY9nGxqNty0FK8-WZDhW39S5jpF'
-      }
-    },
-    '2024/2025': {
-      s5: {
-        'isil_a': 'https://drive.google.com/drive/u/1/folders/1KsHn0KO2j1sbUJRSWs72UQJcB5STuzfh',
-        'isil_b': 'https://drive.google.com/drive/u/1/folders/1UUHbui1E3qWvfME6UunRw80gS8WhGO2z',
-        'acad_a': 'https://drive.google.com/drive/u/1/folders/1RoMzavo7NTkU8SIVVpwRAjhcHvbLiDSw',
-        'acad_b': 'https://drive.google.com/drive/u/1/folders/1m7ygZ3f91IAPDun3CLkQq55sJbopIlhl',
-        'acad_c': 'https://drive.google.com/drive/u/1/folders/1FJ4ix7P9ujr2IajcCtid9PGiBtHhl6l1'
-      },
-      s6: {
-        'isil_a': 'https://drive.google.com/drive/u/1/folders/1K5JK3W6HQjBNEQTx4Hwd5fTPsVbaBPN7',
-        'isil_b': 'https://drive.google.com/drive/u/1/folders/1MB_VIIMEGx43a38uqrPNj8x__issuhuS'
+
+      // Exam resources by specialization
+      if (specialization && subject) {
+        const ex = await getJson(`/exam-resources/?specialization=${specialization.id}`);
+        setExamResources(ex);
       }
     }
-  };
-
-  // Exam links for both specializations
-  const examLinks = {
-    isil: [
-      { 
-        name: 'Génie Logiciel 2', 
-        url: 'https://drive.google.com/drive/folders/1jIsqQ0BkFxTPmuwkMdz4jHWKFmv-4CGP',
-        color: 'from-blue-500 to-indigo-500'
-      },
-      { 
-        name: 'Système d\'Exploitation 2', 
-        url: 'https://drive.google.com/drive/folders/1Meq9p2v08Vc-vljtDHbp8XzpoIq7CEL1',
-        color: 'from-green-500 to-emerald-500'
-      },
-      { 
-        name: 'Base de Données 2', 
-        url: 'https://drive.google.com/drive/folders/1okK0QiXtTTHmdGeFDTcfUxI4AZ5qNq6_',
-        color: 'from-purple-500 to-pink-500'
-      },
-      { 
-        name: 'Système d\'Informatique 2', 
-        url: 'https://drive.google.com/drive/folders/1qxTYiMMlvOcVrUOl2zWVuMHxHulS-0qQ',
-        color: 'from-orange-500 to-red-500'
-      },
-      { 
-        name: 'Réseaux 1', 
-        url: 'https://drive.google.com/drive/folders/1yoq6V6W0FvktJ4RgjO_3uhRdJEwJwvg0',
-        color: 'from-cyan-500 to-blue-500'
-      },
-      { 
-        name: 'Compilation', 
-        url: 'https://drive.google.com/drive/folders/1Lx-yQvpCv7T9b-8XJflRGxG7tS3cKLd2',
-        color: 'from-indigo-500 to-purple-500'
-      }
-    ],
-    acad: [
-      { 
-        name: 'Théorie de Graphe', 
-        url: 'https://drive.google.com/drive/folders/1bk1WqjIljIUKrYqpIo7kctetD6ixNjXq',
-        color: 'from-emerald-500 to-teal-500'
-      },
-      { 
-        name: 'Système d\'Exploitation 2', 
-        url: 'https://drive.google.com/drive/folders/1Meq9p2v08Vc-vljtDHbp8XzpoIq7CEL1',
-        color: 'from-green-500 to-emerald-500'
-      },
-      { 
-        name: 'Réseaux', 
-        url: 'https://drive.google.com/drive/folders/1yoq6V6W0FvktJ4RgjO_3uhRdJEwJwvg0',
-        color: 'from-cyan-500 to-blue-500'
-      },
-      { 
-        name: 'Génie Logiciel', 
-        url: 'https://drive.google.com/drive/folders/1F69Eif1Hyp5ubziUBCWm_O_TzVIkGWV_',
-        color: 'from-blue-500 to-indigo-500'
-      },
-      { 
-        name: 'Compilation', 
-        url: 'https://drive.google.com/drive/folders/1Lx-yQvpCv7T9b-8XJflRGxG7tS3cKLd2',
-        color: 'from-indigo-500 to-purple-500'
-      }
-    ]
-  };
+    load();
+  }, [year, semester, specialization, subject]);
 
   // Course lists for Videos flow (Specialization → Semester → Courses)
   const courseData = {
@@ -273,7 +183,7 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
 
   if (isDrivesFlow) {
     // Drives flow: Display Google Drive links for each specialization
-    const yearData = driveLinks[year];
+    const yearData = driveLinks?.[year];
     const semesterData = yearData?.[semester.id];
     
     if (!semesterData) {

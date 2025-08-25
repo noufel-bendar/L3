@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LessonDrives from './components/LessonDrives';
 import YouTubeRecommendations from './components/YouTubeRecommendations';
+import Summaries from './components/Summaries';
+import { getJson } from './api';
 
 function App() {
   const [selectedMode, setSelectedMode] = useState(null);
@@ -15,36 +17,40 @@ function App() {
     { id: 'isil', name: 'ISIL', fullName: 'Ingénierie Système d\'Information et Logiciels (ISIL)', description: 'Information Systems and Software Engineering', color: 'from-cyan-500 to-blue-500', hoverColor: 'hover:from-cyan-600 hover:to-blue-600' }
   ];
 
-  const academicYears = ['2021/2022', '2022/2023', '2023/2024', '2024/2025'];
+  const [academicYears, setAcademicYears] = useState(['2021/2022']);
 
   const semesters = [
     { id: 's5', name: 'S5', fullName: 'Semester 5', description: 'Fifth Semester Courses' },
     { id: 's6', name: 'S6', fullName: 'Semester 6', description: 'Sixth Semester Courses' }
   ];
 
-  const subjects = {
-    isil: [
-      { id: 'genie-logiciel-2', name: 'Génie Logiciel 2', url: 'https://drive.google.com/drive/folders/1jIsqQ0BkFxTPmuwkMdz4jHWKFmv-4CGP', color: 'from-blue-500 to-indigo-600' },
-      { id: 'systeme-exploitation-2', name: 'Système d\'Exploitation 2', url: 'https://drive.google.com/drive/folders/1Meq9p2v08Vc-vljtDHbp8XzpoIq7CEL1', color: 'from-green-500 to-emerald-600' },
-      { id: 'base-donnees-2', name: 'Base de Données 2', url: 'https://drive.google.com/drive/folders/1okK0QiXtTTHmdGeFDTcfUxI4AZ5qNq6_', color: 'from-purple-500 to-pink-600' },
-      { id: 'systeme-informatique-2', name: 'Système d\'Informatique 2', url: 'https://drive.google.com/drive/folders/1qxTYiMMlvOcVrUOl2zWVuMHxHulS-0qQ', color: 'from-orange-500 to-red-600' },
-      { id: 'reseaux-1', name: 'Réseaux 1', url: 'https://drive.google.com/drive/folders/1yoq6V6W0FvktJ4RgjO_3uhRdJEwJwvg0', color: 'from-cyan-500 to-blue-600' },
-      { id: 'compilation', name: 'Compilation', url: 'https://drive.google.com/drive/folders/1Lx-yQvpCv7T9b-8XJflRGxG7tS3cKLd2', color: 'from-indigo-500 to-purple-600' }
-    ],
-    acad: [
-      { id: 'theorie-graphe', name: 'Théorie de Graphe', url: 'https://drive.google.com/drive/folders/1bk1WqjIljIUKrYqpIo7kctetD6ixNjXq', color: 'from-pink-500 to-rose-600' },
-      { id: 'systeme-exploitation-2', name: 'Système d\'Exploitation 2', url: 'https://drive.google.com/drive/folders/1Meq9p2v08Vc-vljtDHbp8XzpoIq7CEL1', color: 'from-green-500 to-emerald-600' },
-      { id: 'reseaux', name: 'Réseaux', url: 'https://drive.google.com/drive/folders/1yoq6V6W0FvktJ4RgjO_3uhRdJEwJwvg0', color: 'from-cyan-500 to-blue-600' },
-      { id: 'genie-logiciel', name: 'Génie Logiciel', url: 'https://drive.google.com/drive/folders/1F69Eif1Hyp5ubziUBCWm_O_TzVIkGWV_', color: 'from-blue-500 to-indigo-600' },
-      { id: 'compilation', name: 'Compilation', url: 'https://drive.google.com/drive/folders/1Lx-yQvpCv7T9b-8XJflRGxG7tS3cKLd2', color: 'from-indigo-500 to-purple-600' }
-    ]
-  };
+  const [subjects, setSubjects] = useState({ isil: [], acad: [] });
+
+  useEffect(() => {
+    async function bootstrap() {
+      try {
+        const years = await getJson('/academic-years/');
+        const formatted = years.map(y => `${y.start_year}/${y.end_year}`);
+        if (formatted.length) setAcademicYears(formatted);
+        const examsIsil = await getJson('/exam-resources/?specialization=isil');
+        const examsAcad = await getJson('/exam-resources/?specialization=acad');
+        setSubjects({
+          isil: examsIsil.map(e => ({ id: e.name.toLowerCase().replace(/\s+/g,'-'), name: e.name, url: e.url, color: e.color || 'from-blue-500 to-indigo-600' })),
+          acad: examsAcad.map(e => ({ id: e.name.toLowerCase().replace(/\s+/g,'-'), name: e.name, url: e.url, color: e.color || 'from-pink-500 to-rose-600' })),
+        });
+      } catch (e) {
+        // keep defaults if backend not running
+      }
+    }
+    bootstrap();
+  }, []);
 
   const navigationTabs = [
     { id: 'home', name: 'Home' },
     { id: 'playlist', name: 'Playlist' },
     { id: 'drives', name: 'Drives' },
     { id: 'exams', name: 'Exams' },
+    { id: 'summaries', name: 'Summaries' },
     { id: 'contact', name: 'Contact Me' }
   ];
 
@@ -126,24 +132,22 @@ function App() {
                         <p className="text-red-200/80 text-xs">Access exam materials by specialization and subject</p>
                       </div>
                     </button>
-                    <a 
-                      href="https://drive.google.com/drive/folders/1G7vXLuCYu9XBk1FBIQNIfDPBNphURNki"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button 
+                      onClick={() => setActiveTab('summaries')}
                       className="group relative overflow-hidden bg-gradient-to-br from-emerald-600 to-teal-700 p-4 sm:p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-emerald-500/25 border border-emerald-500/30 animate-fade-in-up delay-400 hover:animate-pulse"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/0 to-teal-600/0 group-hover:from-emerald-600/20 group-hover:to-teal-600/20 transition-all duration-300 group-hover:animate-ping"></div>
                       <div className="relative text-center">
                         <div className="inline-block p-2 sm:p-3 bg-white/10 rounded-2xl mb-3 sm:mb-4 group-hover:bg-white/20 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110">
                           <svg className="w-8 h-8 sm:w-12 sm:h-12 text-white group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6M4 6h16M4 6v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6" />
                           </svg>
                         </div>
                         <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-2">Summaries</h3>
                         <p className="text-emerald-100 mb-2 sm:mb-3 text-xs sm:text-sm">Quick study summaries</p>
                         <p className="text-emerald-200/80 text-xs">Access course summaries and notes</p>
                       </div>
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -739,6 +743,18 @@ function App() {
                   />
                 </div>
               )}
+            </div>
+          </div>
+        );
+
+      case 'summaries':
+        return (
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-3xl blur-xl"></div>
+            <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-emerald-500/30">
+              <h2 className="text-4xl font-bold text-white mb-6">🗂️ Summaries</h2>
+              <p className="text-gray-300 mb-8 text-lg">Browse summaries and notes. New ones will appear automatically as you add them in the admin.</p>
+              <Summaries />
             </div>
           </div>
         );

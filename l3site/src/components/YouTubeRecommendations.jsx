@@ -1,43 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getJson } from '../api';
 
 const YouTubeRecommendations = ({ specialization, semester }) => {
-  // Video channels based on specialization and semester
-  const channelData = {
-    isil: {
-      s5: [
-        { id: 1, name: 'Compilation Tutorials', description: 'Compiler design and implementation guides', subscribers: '850K', category: 'Compilation', topics: ['Lexical Analysis', 'Syntax Analysis', 'Semantic Analysis', 'Code Generation'], rating: 4.8, color: 'from-orange-500 to-red-500' },
-        { id: 2, name: 'Network Engineering', description: 'Computer networks and protocols', subscribers: '1.2M', category: 'Networking', topics: ['TCP/IP', 'Network Security', 'Protocols', 'Wireless Networks'], rating: 4.7, color: 'from-blue-500 to-cyan-500' },
-        { id: 3, name: 'Software Engineering Pro', description: 'Advanced software engineering concepts', subscribers: '950K', category: 'Software Engineering', topics: ['Design Patterns', 'Architecture', 'Testing', 'Project Management'], rating: 4.9, color: 'from-purple-500 to-pink-500' },
-        { id: 4, name: 'Operating Systems Deep Dive', description: 'Advanced OS concepts and implementation', subscribers: '750K', category: 'Operating Systems', topics: ['Process Management', 'Memory Management', 'File Systems', 'Virtualization'], rating: 4.6, color: 'from-green-500 to-emerald-500' },
-        { id: 5, name: 'Database Mastery', description: 'Advanced database systems and design', subscribers: '1.1M', category: 'Database', topics: ['Advanced SQL', 'Database Design', 'Data Warehousing', 'Big Data'], rating: 4.8, color: 'from-indigo-500 to-blue-500' },
-        { id: 6, name: 'Information Systems', description: 'Business intelligence and ERP systems', subscribers: '650K', category: 'Information Systems', topics: ['System Analysis', 'Business Intelligence', 'ERP Systems', 'Data Analytics'], rating: 4.7, color: 'from-teal-500 to-cyan-500' }
-      ],
-      s6: [
-        { id: 1, name: 'Object-Oriented Design', description: 'UML modeling and design patterns', subscribers: '800K', category: 'Software Design', topics: ['UML Modeling', 'Design Patterns', 'OOD', 'System Architecture'], rating: 4.8, color: 'from-pink-500 to-rose-500' },
-        { id: 2, name: 'Advanced Networking', description: 'Advanced network protocols and security', subscribers: '900K', category: 'Networking', topics: ['Advanced Protocols', 'Network Security', 'Cloud Networking', 'SDN'], rating: 4.7, color: 'from-cyan-500 to-blue-500' },
-        { id: 3, name: 'Project Management', description: 'Final year project guidance', subscribers: '600K', category: 'Project Management', topics: ['Project Planning', 'Research Methods', 'Implementation', 'Documentation'], rating: 4.6, color: 'from-yellow-500 to-orange-500' },
-        { id: 4, name: 'Enterprise Software', description: 'Enterprise architecture and microservices', subscribers: '750K', category: 'Enterprise', topics: ['Enterprise Architecture', 'Microservices', 'DevOps', 'Agile Methods'], rating: 4.8, color: 'from-violet-500 to-purple-500' }
-      ]
-    },
-    acad: {
-      s5: [
-        { id: 1, name: 'Graph Theory Master', description: 'Graph theory and algorithms', subscribers: '700K', category: 'Mathematics', topics: ['Graph Algorithms', 'Network Flows', 'Matching Theory', 'Graph Coloring'], rating: 4.8, color: 'from-emerald-500 to-green-500' },
-        { id: 2, name: 'OS Fundamentals', description: 'Operating systems concepts', subscribers: '1.1M', category: 'Operating Systems', topics: ['Process Management', 'Memory Management', 'File Systems', 'Virtualization'], rating: 4.7, color: 'from-blue-500 to-indigo-500' },
-        { id: 3, name: 'Network Basics', description: 'Computer networks fundamentals', subscribers: '1.3M', category: 'Networking', topics: ['Network Protocols', 'TCP/IP', 'Network Security', 'Wireless Networks'], rating: 4.9, color: 'from-cyan-500 to-teal-500' },
-        { id: 4, name: 'Software Engineering', description: 'Software engineering principles', subscribers: '950K', category: 'Software Engineering', topics: ['Software Lifecycle', 'Requirements Engineering', 'Design Principles', 'Testing'], rating: 4.8, color: 'from-purple-500 to-violet-500' },
-        { id: 5, name: 'Compiler Design', description: 'Compiler construction tutorials', subscribers: '650K', category: 'Compilation', topics: ['Lexical Analysis', 'Syntax Analysis', 'Semantic Analysis', 'Code Generation'], rating: 4.6, color: 'from-orange-500 to-amber-500' },
-        { id: 6, name: 'Technical English', description: 'English for computer science', subscribers: '500K', category: 'Language', topics: ['Technical Writing', 'Presentation Skills', 'Academic English', 'Professional Communication'], rating: 4.5, color: 'from-rose-500 to-pink-500' }
-      ],
-      s6: [
-        { id: 1, name: 'Web Development Pro', description: 'Modern web development technologies', subscribers: '1.5M', category: 'Web Development', topics: ['HTML/CSS', 'JavaScript', 'React/Angular', 'Backend Development'], rating: 4.9, color: 'from-indigo-500 to-purple-500' },
-        { id: 2, name: 'Technical Documentation', description: 'Documentation and technical writing', subscribers: '400K', category: 'Documentation', topics: ['Technical Documentation', 'API Documentation', 'User Manuals', 'Project Documentation'], rating: 4.6, color: 'from-teal-500 to-emerald-500' },
-        { id: 3, name: 'Professional Skills', description: 'Industry project and professional training', subscribers: '600K', category: 'Professional Development', topics: ['Industry Project', 'Professional Skills', 'Team Collaboration', 'Real-world Application'], rating: 4.7, color: 'from-amber-500 to-yellow-500' },
-        { id: 4, name: 'System Administration', description: 'Linux and system administration', subscribers: '800K', category: 'System Administration', topics: ['Linux Administration', 'Network Administration', 'Security Administration', 'Cloud Administration'], rating: 4.8, color: 'from-slate-500 to-gray-500' }
-      ]
-    }
-  };
+  const [channels, setChannels] = useState([]);
 
-  const channels = channelData[specialization?.id]?.[semester?.id] || [];
+  useEffect(() => {
+    async function load() {
+      if (specialization && semester) {
+        const cs = await getJson(`/courses/?specialization=${specialization.id}&semester=${semester.id}`);
+        // Adapt backend Course model to channel-like cards
+        const mapped = cs.map((c) => ({
+          id: c.id,
+          name: c.name,
+          description: 'Curated playlists',
+          subscribers: '',
+          category: c.name,
+          topics: c.videoPlaylists?.map(v => v.title) || [],
+          rating: 5,
+          color: 'from-red-500 to-pink-600',
+        }));
+        setChannels(mapped);
+      } else {
+        setChannels([]);
+      }
+    }
+    load();
+  }, [specialization, semester]);
 
   const renderStars = (rating) => {
     const stars = [];
