@@ -3,20 +3,22 @@ from content.models import Course, VideoPlaylist
 
 
 class Command(BaseCommand):
-    help = 'Update the video content structure according to new specifications'
+    help = 'Update video content structure to use simplified ACAD/ISIL specialization without sections'
 
     def handle(self, *args, **options):
-        # First, let's clear all existing courses and playlists
-        self.stdout.write("Clearing existing video content...")
+        self.stdout.write(self.style.SUCCESS('Starting video content structure update...'))
+        
+        # Clear existing video courses and playlists
         VideoPlaylist.objects.all().delete()
         Course.objects.all().delete()
+        self.stdout.write(self.style.SUCCESS('Cleared existing video content'))
         
-        # Define the new course structure with proper ordering
+        # New course structure with simplified specialization (no sections)
         new_course_structure = [
             # ACAD S5 - Order: 1-6
             {
                 "course_name": "Théorie des Graphes",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 1,
                 "playlists": [
@@ -27,7 +29,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Système d'Exploitation 2",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 2,
                 "playlists": [
@@ -37,7 +39,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Réseaux",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 3,
                 "playlists": [
@@ -48,7 +50,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Génie Logiciel 1",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 4,
                 "playlists": [
@@ -59,7 +61,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Compilation",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 5,
                 "playlists": [
@@ -69,7 +71,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Anglais 3",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s5",
                 "display_order": 6,
                 "playlists": [
@@ -80,7 +82,7 @@ class Command(BaseCommand):
             # ACAD S6 - Order: 1-4
             {
                 "course_name": "Programmation Web",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s6",
                 "display_order": 1,
                 "playlists": [
@@ -90,30 +92,30 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Doc STR",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s6",
                 "display_order": 2,
                 "playlists": []
             },
             {
                 "course_name": "PFP",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s6",
                 "display_order": 3,
                 "playlists": []
             },
             {
                 "course_name": "Admin",
-                "specialization": "acad_a",
+                "specialization": "acad",
                 "semester": "s6",
                 "display_order": 4,
                 "playlists": []
             },
             
-            # ISIL S5 - Order: 1-7
+            # ISIL S5 - Order: 1-6
             {
                 "course_name": "Compilation",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 1,
                 "playlists": [
@@ -123,7 +125,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Réseaux",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 2,
                 "playlists": [
@@ -133,7 +135,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Génie Logiciel 2",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 3,
                 "playlists": [
@@ -142,7 +144,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Système d'Exploitation 2",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 4,
                 "playlists": [
@@ -152,7 +154,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Base de Données 2",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 5,
                 "playlists": [
@@ -161,7 +163,7 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "Système d'Informatique 2",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s5",
                 "display_order": 6,
                 "playlists": [
@@ -173,14 +175,14 @@ class Command(BaseCommand):
             # ISIL S6 - Order: 1-4
             {
                 "course_name": "ORAD",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s6",
                 "display_order": 1,
                 "playlists": []
             },
             {
                 "course_name": "Réseaux 2",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s6",
                 "display_order": 2,
                 "playlists": [
@@ -189,14 +191,14 @@ class Command(BaseCommand):
             },
             {
                 "course_name": "PFE",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s6",
                 "display_order": 3,
                 "playlists": []
             },
             {
                 "course_name": "Génie Logiciel 3",
-                "specialization": "isil_a",
+                "specialization": "isil",
                 "semester": "s6",
                 "display_order": 4,
                 "playlists": [
@@ -204,46 +206,35 @@ class Command(BaseCommand):
                 ]
             }
         ]
-
-        created_courses = 0
-        created_playlists = 0
-        errors = []
-
-        for data in new_course_structure:
-            try:
-                # Create the course
-                course = Course.objects.create(
-                    name=data["course_name"],
-                    specialization=data["specialization"],
-                    semester=data["semester"],
-                    display_order=data["display_order"]
-                )
-                created_courses += 1
-                self.stdout.write(f"Created course: {course} (Order: {data['display_order']})")
-
-                # Create playlists for the course
-                for playlist_data in data["playlists"]:
-                    playlist = VideoPlaylist.objects.create(
-                        course=course,
-                        title=playlist_data["title"],
-                        url=playlist_data["url"]
-                    )
-                    created_playlists += 1
-                    self.stdout.write(f"  Created playlist: {playlist}")
-
-            except Exception as e:
-                error_msg = f"Error processing {data['course_name']} ({data['specialization']} {data['semester']}): {str(e)}"
-                errors.append(error_msg)
-                self.stdout.write(self.style.ERROR(error_msg))
-
-        # Summary
-        self.stdout.write(self.style.SUCCESS(f"\n=== Video Structure Update Summary ==="))
-        self.stdout.write(f"Courses created: {created_courses}")
-        self.stdout.write(f"Playlists created: {created_playlists}")
         
-        if errors:
-            self.stdout.write(self.style.WARNING(f"\nErrors encountered: {len(errors)}"))
-            for error in errors:
-                self.stdout.write(self.style.ERROR(f"  - {error}"))
-        else:
-            self.stdout.write(self.style.SUCCESS("\nAll video content structure updated successfully!"))
+        # Create courses and playlists
+        created_courses = []
+        for course_data in new_course_structure:
+            # Create course
+            course = Course.objects.create(
+                name=course_data["course_name"],
+                specialization=course_data["specialization"],
+                semester=course_data["semester"],
+                display_order=course_data["display_order"]
+            )
+            created_courses.append(course)
+            self.stdout.write(f'Created course: {course.name} ({course.specialization} {course.semester})')
+            
+            # Create playlists for the course
+            for playlist_data in course_data["playlists"]:
+                playlist = VideoPlaylist.objects.create(
+                    course=course,
+                    title=playlist_data["title"],
+                    url=playlist_data["url"]
+                )
+                self.stdout.write(f'  - Created playlist: {playlist.title}')
+        
+        self.stdout.write(
+            self.style.SUCCESS(
+                f'\nSuccessfully created {len(created_courses)} courses!\n'
+                f'ACAD S5: {len([c for c in created_courses if c.specialization == "acad" and c.semester == "s5"])} courses\n'
+                f'ACAD S6: {len([c for c in created_courses if c.specialization == "acad" and c.semester == "s6"])} courses\n'
+                f'ISIL S5: {len([c for c in created_courses if c.specialization == "isil" and c.semester == "s5"])} courses\n'
+                f'ISIL S6: {len([c for c in created_courses if c.specialization == "isil" and c.semester == "s6"])} courses'
+            )
+        )
