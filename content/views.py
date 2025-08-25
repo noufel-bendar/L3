@@ -1,19 +1,7 @@
 from rest_framework import viewsets, permissions
-from .models import AcademicYear, Lesson, SiteSettings, CourseDriveLink, Course, VideoPlaylist, ExamResource, SummaryResource
-from .serializers import AcademicYearSerializer, LessonSerializer, SiteSettingsSerializer, CourseDriveLinkSerializer, CourseSerializer, VideoPlaylistSerializer, ExamResourceSerializer, SummaryResourceSerializer
+from .models import SiteSettings, CourseDriveLink, Course, VideoPlaylist, ExamResource, SummaryResource
+from .serializers import SiteSettingsSerializer, CourseDriveLinkSerializer, CourseSerializer, VideoPlaylistSerializer, ExamResourceSerializer, SummaryResourceSerializer
 from .permissions import ReadOnlyOrAdmin
-
-
-class AcademicYearViewSet(viewsets.ModelViewSet):
-    queryset = AcademicYear.objects.all()
-    serializer_class = AcademicYearSerializer
-    permission_classes = [ReadOnlyOrAdmin]
-
-
-class LessonViewSet(viewsets.ModelViewSet):
-    queryset = Lesson.objects.select_related("academic_year").all()
-    serializer_class = LessonSerializer
-    permission_classes = [ReadOnlyOrAdmin]
 
 
 class SiteSettingsViewSet(viewsets.ModelViewSet):
@@ -23,7 +11,7 @@ class SiteSettingsViewSet(viewsets.ModelViewSet):
 
 
 class CourseDriveLinkViewSet(viewsets.ModelViewSet):
-    queryset = CourseDriveLink.objects.select_related("academic_year").all()
+    queryset = CourseDriveLink.objects.all()
     serializer_class = CourseDriveLinkSerializer
     permission_classes = [ReadOnlyOrAdmin]
 

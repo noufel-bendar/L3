@@ -1,36 +1,6 @@
 from django.db import models
 
 
-class AcademicYear(models.Model):
-    start_year = models.PositiveIntegerField()
-    end_year = models.PositiveIntegerField()
-    drive_link = models.URLField(help_text="Google Drive folder link for this academic year")
-
-    class Meta:
-        unique_together = ("start_year", "end_year")
-        ordering = ["-start_year"]
-
-    def __str__(self) -> str:
-        return f"{self.start_year}-{self.end_year}"
-
-
-class Lesson(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    youtube_url = models.URLField(blank=True)
-    academic_year = models.ForeignKey(
-        AcademicYear, related_name="lessons", on_delete=models.CASCADE
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ["-created_at"]
-
-    def __str__(self) -> str:
-        return self.title
-
-
 class SiteSettings(models.Model):
     discord_invite_url = models.URLField(blank=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -50,21 +20,27 @@ class CourseDriveLink(models.Model):
     class Specialization(models.TextChoices):
         ISIL_A = "isil_a", "ISIL A"
         ISIL_B = "isil_b", "ISIL B"
+        ISIL_C = "isil_c", "ISIL C"
         ACAD_A = "acad_a", "ACAD A"
         ACAD_B = "acad_b", "ACAD B"
         ACAD_C = "acad_c", "ACAD C"
 
-    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name="drive_links")
+    start_year = models.PositiveIntegerField(help_text="Start year (e.g., 2025)")
+    end_year = models.PositiveIntegerField(help_text="End year (e.g., 2026)")
     semester = models.CharField(max_length=8, choices=Semester.choices)
     specialization = models.CharField(max_length=16, choices=Specialization.choices)
     url = models.URLField()
 
     class Meta:
-        unique_together = ("academic_year", "semester", "specialization")
-        ordering = ["-academic_year__start_year", "semester", "specialization"]
+        unique_together = ("start_year", "end_year", "semester", "specialization")
+        ordering = ["-start_year", "semester", "specialization"]
 
     def __str__(self) -> str:
-        return f"{self.academic_year} {self.semester} {self.specialization}"
+        return f"{self.start_year}-{self.end_year} {self.semester} {self.specialization}"
+
+    @property
+    def academic_year_display(self):
+        return f"{self.start_year}-{self.end_year}"
 
 
 class Course(models.Model):
@@ -103,7 +79,7 @@ class ExamResource(models.Model):
         ACAD = "acad", "ACAD"
 
     name = models.CharField(max_length=255)
-    specialization = models.CharField(max_length=8, choices=Specialization.choices)
+    specialization = models.CharField(max_length=16, choices=Specialization.choices)
     url = models.URLField()
 
     class Meta:

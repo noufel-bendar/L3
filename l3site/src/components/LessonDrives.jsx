@@ -14,7 +14,7 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
         const links = await getJson('/drive-links/');
         const grouped = {};
         links.forEach((l) => {
-          const display = `${l.academic_year.start_year}-${l.academic_year.end_year}`;
+          const display = `${l.start_year}-${l.end_year}`;
           if (!grouped[display]) grouped[display] = { s5: {}, s6: {} };
           grouped[display][l.semester][l.specialization] = l.url;
         });
@@ -197,6 +197,7 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
     const specializations = [
       { id: 'isil_a', name: 'ISIL A', color: 'from-cyan-500 to-blue-500' },
       { id: 'isil_b', name: 'ISIL B', color: 'from-blue-500 to-indigo-500' },
+      { id: 'isil_c', name: 'ISIL C', color: 'from-indigo-500 to-purple-500' },
       { id: 'acad_a', name: 'ACAD A', color: 'from-purple-500 to-pink-500' },
       { id: 'acad_b', name: 'ACAD B', color: 'from-pink-500 to-rose-500' },
       { id: 'acad_c', name: 'ACAD C', color: 'from-rose-500 to-red-500' }

@@ -1,31 +1,5 @@
 from rest_framework import serializers
-from .models import AcademicYear, Lesson, SiteSettings, CourseDriveLink, Course, VideoPlaylist, ExamResource, SummaryResource
-
-
-class AcademicYearSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AcademicYear
-        fields = ["id", "start_year", "end_year", "drive_link"]
-
-
-class LessonSerializer(serializers.ModelSerializer):
-    academic_year = AcademicYearSerializer(read_only=True)
-    academic_year_id = serializers.PrimaryKeyRelatedField(
-        queryset=AcademicYear.objects.all(), source="academic_year", write_only=True
-    )
-
-    class Meta:
-        model = Lesson
-        fields = [
-            "id",
-            "title",
-            "description",
-            "youtube_url",
-            "academic_year",
-            "academic_year_id",
-            "created_at",
-            "updated_at",
-        ]
+from .models import SiteSettings, CourseDriveLink, Course, VideoPlaylist, ExamResource, SummaryResource
 
 
 class SiteSettingsSerializer(serializers.ModelSerializer):
@@ -35,20 +9,18 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
 
 
 class CourseDriveLinkSerializer(serializers.ModelSerializer):
-    academic_year = AcademicYearSerializer(read_only=True)
-    academic_year_id = serializers.PrimaryKeyRelatedField(
-        queryset=AcademicYear.objects.all(), source="academic_year", write_only=True
-    )
+    academic_year_display = serializers.CharField(source='academic_year_display', read_only=True)
 
     class Meta:
         model = CourseDriveLink
         fields = [
             "id",
-            "academic_year",
-            "academic_year_id",
+            "start_year",
+            "end_year",
             "semester",
             "specialization",
             "url",
+            "academic_year_display",
         ]
 
 

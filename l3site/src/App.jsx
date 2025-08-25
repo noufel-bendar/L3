@@ -30,14 +30,14 @@ function App() {
   useEffect(() => {
     async function bootstrap() {
       try {
-        const years = await getJson('/academic-years/');
-        const formatted = years.map(y => `${y.start_year}-${y.end_year}`);
-        if (formatted.length) setAcademicYears(formatted);
+        const driveLinks = await getJson('/drive-links/');
+        const years = [...new Set(driveLinks.map(link => `${link.start_year}-${link.end_year}`))];
+        if (years.length) setAcademicYears(years);
         const examsIsil = await getJson('/exam-resources/?specialization=isil');
         const examsAcad = await getJson('/exam-resources/?specialization=acad');
         setSubjects({
           isil: examsIsil.map(e => ({ id: e.name.toLowerCase().replace(/\s+/g,'-'), name: e.name, url: e.url, color: e.color || 'from-blue-500 to-indigo-600' })),
-          acad: examsAcad.map(e => ({ id: e.name.toLowerCase().replace(/\s+/g,'-'), name: e.name, url: e.url, color: e.color || 'from-pink-500 to-rose-600' })),
+          acad: examsAcad.map(e => ({ id: e.name.toLowerCase().replace(/\s+/g,'-'), name: e.name, url: e.url, color: e.color || 'from-pink-500 to-indigo-600' })),
         });
       } catch (e) {
         // keep defaults if backend not running
