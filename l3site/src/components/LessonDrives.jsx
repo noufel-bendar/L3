@@ -8,43 +8,32 @@ const LessonDrives = ({ specialization, semester, subject }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Helper function to get specialization ID
-  const getSpecializationId = () => {
-    if (typeof specialization === 'string') {
-      return specialization;
-    }
-    return specialization?.id;
-  };
-
-  // Helper function to get specialization name
-  const getSpecializationName = () => {
-    if (typeof specialization === 'string') {
-      return specialization.toUpperCase();
-    }
-    return specialization?.name;
-  };
-
   useEffect(() => {
     async function load() {
+      setLoading(true);
+      setError(null);
+      
       try {
-        setLoading(true);
-        setError(null);
-
-        // Course materials by specialization and semester
+        // Course materials (Drive links) for specialization+semester
         if (specialization && semester && !subject) {
-          const dl = await getJson(`/drive-links/?specialization=${getSpecializationId()}&semester=${semester.id}`);
-          setDriveLinks(dl);
+          const links = await getJson('/drive-links/');
+          // Filter by current semester and specialization
+          const filtered = links.filter(link => 
+            link.semester === semester.id && 
+            link.specialization === specialization.id
+          );
+          setDriveLinks(filtered);
         }
 
-        // Video courses by specialization and semester
+        // Videos courses for specialization+semester
         if (specialization && semester && !subject) {
-          const cs = await getJson(`/courses/?specialization=${getSpecializationId()}&semester=${semester.id}`);
+          const cs = await getJson(`/courses/?specialization=${specialization.id}&semester=${semester.id}`);
           setCourses(cs.map((c) => ({ id: c.id, name: c.name, videoPlaylists: c.videoPlaylists })));
         }
 
-        // Exam resources by specialization and semester
-        if (specialization && subject && semester) {
-          const ex = await getJson(`/exam-resources/?specialization=${getSpecializationId()}&semester=${semester.id}`);
+        // Exam resources by specialization
+        if (specialization && subject) {
+          const ex = await getJson(`/exam-resources/?specialization=${specialization.id}`);
           setExamResources(ex);
         }
       } catch (err) {
@@ -106,7 +95,7 @@ const LessonDrives = ({ specialization, semester, subject }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <p className="text-gray-400 text-xl">No course materials available for {getSpecializationName()} - {semester.name}</p>
+          <p className="text-gray-400 text-xl">No course materials available for {specialization.name} - {semester.name}</p>
           <p className="text-gray-500 text-sm mt-2">Please check back later or contact the administrator.</p>
         </div>
       );
@@ -135,15 +124,15 @@ const LessonDrives = ({ specialization, semester, subject }) => {
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-white">
-                  Course Materials - {getSpecializationName()} - {semester.name}
+                  Course Materials - {specialization.name} - {semester.name}
                 </h3>
                 <p className="text-blue-200 text-lg">
-                  Access course materials for {getSpecializationName()} specialization
+                  Access course materials for {specialization.name} specialization
                 </p>
               </div>
             </div>
             <p className="text-gray-300 text-lg leading-relaxed">
-              Access the Google Drive folder containing all course materials for {getSpecializationName()} specialization, {semester.name}.
+              Access the Google Drive folder containing all course materials for {specialization.name} specialization, {semester.name}.
             </p>
           </div>
         </div>
@@ -336,7 +325,7 @@ const LessonDrives = ({ specialization, semester, subject }) => {
               </div>
             </div>
             <p className="text-gray-300 text-lg leading-relaxed">
-              Find exam materials, past papers, and study resources for {examResource.name} in {getSpecializationName()} specialization.
+              Find exam materials, past papers, and study resources for {examResource.name} in {specialization?.name} specialization.
             </p>
           </div>
         </div>
