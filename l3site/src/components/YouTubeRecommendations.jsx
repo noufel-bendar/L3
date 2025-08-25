@@ -7,7 +7,7 @@ const YouTubeRecommendations = ({ specialization, semester }) => {
   useEffect(() => {
     async function load() {
       if (specialization && semester) {
-        const cs = await getJson(`/courses/?specialization=${specialization.id}&semester=${semester.id}`);
+        const cs = await getJson(`/courses/?specialization=${specialization}&semester=${semester}`);
         // Adapt backend Course model to channel-like cards
         const mapped = cs.map((c) => ({
           id: c.id,
@@ -69,9 +69,9 @@ const YouTubeRecommendations = ({ specialization, semester }) => {
   const getContextInfo = () => {
     if (specialization && semester) {
       return {
-        title: `${specialization.name} - ${semester.fullName} Videos`,
-        subtitle: `Video playlists for ${specialization.name} ${semester.name}`,
-        description: `Discover the best YouTube channels for ${specialization.name} ${semester.name} courses. These channels offer high-quality content to supplement your learning with visual explanations and real-world examples.`
+        title: `${specialization} - ${semester} Videos`,
+        subtitle: `Video playlists for ${specialization} ${semester}`,
+        description: `Discover the best YouTube channels for ${specialization} ${semester} courses. These channels offer high-quality content to supplement your learning with visual explanations and real-world examples.`
       };
     } else {
       return {

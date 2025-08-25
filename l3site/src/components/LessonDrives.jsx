@@ -29,13 +29,13 @@ const LessonDrives = ({ specialization, year, semester, subject }) => {
 
         // Videos courses for specialization+semester
         if (specialization && semester && !subject) {
-          const cs = await getJson(`/courses/?specialization=${specialization.id}&semester=${semester.id}`);
+          const cs = await getJson(`/courses/?specialization=${specialization}&semester=${semester.id}`);
           setCourses(cs.map((c) => ({ id: c.id, name: c.name, videoPlaylists: c.videoPlaylists })));
         }
 
         // Exam resources by specialization
         if (specialization && subject) {
-          const ex = await getJson(`/exam-resources/?specialization=${specialization.id}`);
+          const ex = await getJson(`/exam-resources/?specialization=${specialization}`);
           setExamResources(ex);
         }
       } catch (err) {

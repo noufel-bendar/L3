@@ -73,38 +73,28 @@ function App() {
         const years = [...new Set(driveLinks.map(link => `${link.start_year}-${link.end_year}`))];
         if (years.length) setAcademicYears(years);
         
-        // Fetch exam resources for each major-section combination
-        const majorSections = ['isil_a', 'isil_b', 'isil_c', 'acad_a', 'acad_b', 'acad_c'];
+        // Fetch exam resources for each major
+        const majors = ['isil', 'acad'];
         const allExamResources = {};
         
-        for (const spec of majorSections) {
+        for (const major of majors) {
           try {
-            const resources = await getJson(`/exam-resources/?specialization=${spec}`);
-            allExamResources[spec] = resources.map(e => ({ 
+            // Fetch exam resources for the major (will include all sections)
+            const resources = await getJson(`/exam-resources/?specialization=${major}`);
+            allExamResources[major] = resources.map(e => ({ 
               id: e.name.toLowerCase().replace(/\s+/g,'-'), 
               name: e.name, 
               url: e.url, 
               color: e.color || 'from-blue-500 to-indigo-600' 
             }));
           } catch (err) {
-            console.warn(`Failed to fetch exam resources for ${spec}:`, err);
-            allExamResources[spec] = [];
+            console.warn(`Failed to fetch exam resources for ${major}:`, err);
+            allExamResources[major] = [];
           }
         }
         
-        // Group by major type (isil vs acad)
-        setSubjects({
-          isil: [
-            ...allExamResources.isil_a || [],
-            ...allExamResources.isil_b || [],
-            ...allExamResources.isil_c || []
-          ],
-          acad: [
-            ...allExamResources.acad_a || [],
-            ...allExamResources.acad_b || [],
-            ...allExamResources.acad_c || []
-          ]
-        });
+        // Set subjects by major
+        setSubjects(allExamResources);
       } catch (e) {
         console.error('Error loading initial data:', e);
         setError('Failed to load data from the server. Please check your connection and try again.');
@@ -374,53 +364,26 @@ function App() {
                     </button>
                   </div>
                 </div>
-              ) : !selectedSection ? (
-                <div className="space-y-8">
-                  <div className="text-center mb-8">
-                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Section</h3>
-                    <p className="text-gray-400 text-lg">Select your section for {selectedMajor.name}</p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {selectedMajor.sections.map((section) => (
-                      <button 
-                        key={section.id} 
-                        onClick={() => setSelectedSection(section)} 
-                        className={`group relative overflow-hidden bg-gradient-to-br ${section.color} p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
-                      >
-                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
-                        <div className="relative text-center">
-                          <h3 className="text-2xl font-bold text-white mb-2">{section.name}</h3>
-                          <p className="text-white/80 text-sm">{selectedMajor.name} {section.id.toUpperCase()}</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="text-center">
-                    <button onClick={() => setSelectedMajor(null)} className="text-purple-400 hover:text-purple-300 underline text-lg transition-colors">
-                      ← Back to Major Selection
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name} {selectedSection.id.toUpperCase()}</h3>
-                      <p className="text-gray-400">Video content for your selected semester, major, and section</p>
-                    </div>
-                    <button 
-                      onClick={() => setSelectedSection(null)} 
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
-                    >
-                      ← Back
-                    </button>
-                  </div>
-                  <LessonDrives 
-                    specialization={{ id: `${selectedMajor.id}_${selectedSection.id}`, name: `${selectedMajor.name} ${selectedSection.id.toUpperCase()}` }} 
-                    semester={selectedSemester} 
-                  />
-                </div>
-              )}
+                             ) : (
+                 <div className="space-y-6">
+                   <div className="flex items-center justify-between">
+                     <div>
+                       <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name}</h3>
+                       <p className="text-gray-400">Video content for your selected semester and major</p>
+                     </div>
+                     <button 
+                       onClick={() => setSelectedMajor(null)} 
+                       className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
+                     >
+                       ← Back
+                     </button>
+                   </div>
+                   <YouTubeRecommendations 
+                     specialization={selectedMajor.id}
+                     semester={selectedSemester.id} 
+                   />
+                 </div>
+               )}
             </div>
           </div>
         );
@@ -612,88 +575,60 @@ function App() {
                     </button>
                   </div>
                 </div>
-              ) : !selectedSection ? (
-                <div className="space-y-8">
-                  <div className="text-center mb-8 animate-fade-in-up delay-200">
-                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Section</h3>
-                    <p className="text-gray-400 text-lg">Select your section for {selectedMajor.name}</p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {selectedMajor.sections.map((section, index) => (
-                      <button 
-                        key={section.id} 
-                        onClick={() => setSelectedSection(section)} 
-                        className={`group relative overflow-hidden bg-gradient-to-br ${section.color} p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20 animate-fade-in-up hover:animate-pulse`}
-                        style={{ animationDelay: `${300 + index * 100}ms` }}
-                      >
-                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl group-hover:animate-ping"></div>
-                        <div className="relative text-center">
-                          <h3 className="text-2xl font-bold text-white mb-2">{section.name}</h3>
-                          <p className="text-white/80 text-sm">{selectedMajor.name} {section.id.toUpperCase()}</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="text-center">
-                    <button onClick={() => setSelectedMajor(null)} className="text-red-400 hover:text-red-300 underline text-lg transition-colors">
-                      ← Back to Major Selection
-                    </button>
-                  </div>
-                </div>
-              ) : !selectedSubject ? (
-                <div className="space-y-8">
-                  <div className="text-center mb-8 animate-fade-in-up delay-200">
-                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Subject</h3>
-                    <p className="text-gray-400 text-lg">Select your subject for {selectedSemester.name} - {selectedMajor.name} {selectedSection.id.toUpperCase()}</p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {(() => {
-                      // Filter subjects based on major type (isil vs acad)
-                      const availableSubjects = subjects[selectedMajor.id] || [];
-                      
-                      return availableSubjects.map((subject, index) => (
-                        <button 
-                          key={subject.id} 
-                          onClick={() => setSelectedSubject(subject)} 
-                          className={`group relative overflow-hidden bg-gradient-to-br ${subject.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20 animate-fade-in-up hover:animate-pulse`}
-                          style={{ animationDelay: `${300 + index * 100}ms` }}
-                        >
-                          <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl group-hover:animate-ping"></div>
-                          <div className="relative text-center">
-                            <h3 className="text-4xl font-bold text-white mb-4">{subject.name}</h3>
-                            <p className="text-white/90 mb-3 text-lg">Exam materials</p>
-                            <p className="text-white/80 text-sm">Access exam materials for {subject.name}</p>
-                          </div>
-                        </button>
-                      ));
-                    })()}
-                  </div>
-                  <div className="text-center">
-                    <button onClick={() => setSelectedSection(null)} className="text-red-400 hover:text-red-300 underline text-lg transition-colors">
-                      ← Back to Section Selection
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name} {selectedSection.id.toUpperCase()} - {selectedSubject.name}</h3>
-                      <p className="text-gray-400">Exam materials for your selected semester, major, section, and subject</p>
-                    </div>
-                    <button 
-                      onClick={() => setSelectedSubject(null)} 
-                      className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-red-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
-                    >
-                      ← Back
-                    </button>
-                  </div>
-                  <LessonDrives 
-                    specialization={{ id: `${selectedMajor.id}_${selectedSection.id}`, name: `${selectedMajor.name} ${selectedSection.id.toUpperCase()}` }} 
-                    subject={selectedSubject} 
-                  />
-                </div>
-              )}
+                             ) : !selectedSubject ? (
+                 <div className="space-y-8">
+                   <div className="text-center mb-8 animate-fade-in-up delay-200">
+                     <h3 className="text-2xl font-bold text-white mb-4">Choose Your Subject</h3>
+                     <p className="text-gray-400 text-lg">Select your subject for {selectedSemester.name} - {selectedMajor.name}</p>
+                   </div>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                     {(() => {
+                       // Filter subjects based on major type (isil vs acad)
+                       const availableSubjects = subjects[selectedMajor.id] || [];
+                       
+                       return availableSubjects.map((subject, index) => (
+                         <button 
+                           key={subject.id} 
+                           onClick={() => setSelectedSubject(subject)} 
+                           className={`group relative overflow-hidden bg-gradient-to-br ${subject.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20 animate-fade-in-up hover:animate-pulse`}
+                           style={{ animationDelay: `${300 + index * 100}ms` }}
+                         >
+                           <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl group-hover:animate-ping"></div>
+                           <div className="relative text-center">
+                             <h3 className="text-4xl font-bold text-white mb-4">{subject.name}</h3>
+                             <p className="text-white/90 mb-3 text-lg">Exam materials</p>
+                             <p className="text-white/80 text-sm">Access exam materials for {subject.name}</p>
+                           </div>
+                         </button>
+                       ));
+                     })()}
+                   </div>
+                   <div className="text-center">
+                     <button onClick={() => setSelectedMajor(null)} className="text-red-400 hover:text-red-300 underline text-lg transition-colors">
+                       ← Back to Major Selection
+                     </button>
+                   </div>
+                 </div>
+               ) : (
+                 <div className="space-y-6">
+                   <div className="flex items-center justify-between">
+                     <div>
+                       <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name} - {selectedSubject.name}</h3>
+                       <p className="text-gray-400">Exam materials for your selected semester, major, and subject</p>
+                     </div>
+                     <button 
+                       onClick={() => setSelectedSubject(null)} 
+                       className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-red-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
+                     >
+                       ← Back
+                     </button>
+                   </div>
+                   <LessonDrives 
+                     specialization={selectedMajor.id}
+                     subject={selectedSubject} 
+                   />
+                 </div>
+               )}
             </div>
           </div>
         );
@@ -850,14 +785,7 @@ function App() {
                       </span>
                     </>
                   )}
-                  {selectedSection && (
-                    <>
-                      <span className="text-gray-400">•</span>
-                      <span className={`${selectedMode === 'videos' ? 'text-purple-400' : selectedMode === 'exams' ? 'text-red-400' : 'text-blue-400'}`}>
-                        {selectedSection.name}
-                      </span>
-                    </>
-                  )}
+
                   {selectedSubject && selectedMode === 'exams' && (
                     <>
                       <span className="text-gray-400">•</span>
