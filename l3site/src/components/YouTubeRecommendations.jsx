@@ -8,8 +8,10 @@ const YouTubeRecommendations = ({ specialization, semester }) => {
     async function load() {
       if (specialization && semester) {
         const cs = await getJson(`/courses/?specialization=${specialization}&semester=${semester}`);
+        // Sort courses by display_order to ensure proper ordering
+        const sortedCourses = cs.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
         // Adapt backend Course model to channel-like cards
-        const mapped = cs.map((c) => ({
+        const mapped = sortedCourses.map((c) => ({
           id: c.id,
           name: c.name,
           description: 'Curated playlists',

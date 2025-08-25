@@ -59,10 +59,11 @@ class Course(models.Model):
     name = models.CharField(max_length=255)
     specialization = models.CharField(max_length=16, choices=Specialization.choices)
     semester = models.CharField(max_length=8, choices=Semester.choices)
+    display_order = models.PositiveIntegerField(default=0, help_text="Order in which courses should appear")
 
     class Meta:
         unique_together = ("name", "specialization", "semester")
-        ordering = ["specialization", "semester", "name"]
+        ordering = ["specialization", "semester", "display_order", "name"]
 
     def __str__(self) -> str:
         return f"{self.name} ({self.specialization.upper()} {self.semester.upper()})"
