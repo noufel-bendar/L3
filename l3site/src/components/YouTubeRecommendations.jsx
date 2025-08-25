@@ -16,6 +16,7 @@ const YouTubeRecommendations = ({ specialization, semester }) => {
           subscribers: '',
           category: c.name,
           topics: c.videoPlaylists?.map(v => v.title) || [],
+          playlists: c.videoPlaylists || [],
           rating: 5,
           color: 'from-red-500 to-pink-600',
         }));
@@ -121,7 +122,7 @@ const YouTubeRecommendations = ({ specialization, semester }) => {
                 </div>
                 <div className="text-right">
                   <span className="inline-block bg-gradient-to-r from-red-600 to-pink-600 text-white text-sm px-3 py-1 rounded-full font-semibold shadow-lg">
-                    {channel.subscribers} subscribers
+                    {channel.playlists.length} playlist{channel.playlists.length !== 1 ? 's' : ''}
                   </span>
                 </div>
               </div>
@@ -137,13 +138,61 @@ const YouTubeRecommendations = ({ specialization, semester }) => {
                 </div>
               </div>
               
+              {/* Playlists */}
+              {channel.playlists.length > 0 ? (
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold text-gray-200 mb-3 flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    Available Playlists:
+                  </h4>
+                  <div className="space-y-3">
+                    {channel.playlists.map((playlist, index) => (
+                      <a
+                        key={playlist.id}
+                        href={playlist.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center p-3 bg-gray-700/50 rounded-lg border border-gray-600/50 hover:border-red-500/50 transition-all duration-300 group-hover:bg-gray-700/70"
+                      >
+                        <div className="p-2 bg-gradient-to-r from-red-500 to-pink-600 rounded-lg mr-3 group-hover:scale-110 transition-transform duration-300">
+                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors duration-300">
+                            {playlist.title}
+                          </span>
+                        </div>
+                        <svg className="w-4 h-4 text-gray-400 group-hover:text-red-400 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <div className="text-center py-4">
+                    <div className="inline-block p-3 bg-gray-700/50 rounded-full mb-3">
+                      <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-gray-400 text-sm">No playlists available yet</p>
+                  </div>
+                </div>
+              )}
+              
               {/* Topics Covered */}
               <div className="mb-6">
                 <h4 className="text-lg font-semibold text-gray-200 mb-3 flex items-center">
                   <svg className="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  Topics Covered:
+                  Course Topics:
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {channel.topics.map((topic, index) => (
@@ -153,14 +202,6 @@ const YouTubeRecommendations = ({ specialization, semester }) => {
                   ))}
                 </div>
               </div>
-              
-              {/* Watch Button */}
-              <button className={`w-full bg-gradient-to-r ${channel.color} text-white py-4 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg group-hover:shadow-xl flex items-center justify-center`}>
-                <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-                Watch Channel
-              </button>
             </div>
           </div>
         ))}
@@ -179,7 +220,7 @@ const YouTubeRecommendations = ({ specialization, semester }) => {
             <h4 className="text-xl font-bold text-white">Learning Tips</h4>
           </div>
           <p className="text-gray-300 text-lg leading-relaxed">
-            Subscribe to channels that match your learning style. Many channels offer playlists organized by topic, 
+            Click on any playlist to start learning! These curated playlists are organized by topic, 
             making it easy to follow along with your coursework for {specialization?.name} {semester?.name}. 
             Don't forget to like and comment to support the creators! 🎯✨
           </p>
