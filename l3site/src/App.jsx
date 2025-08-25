@@ -8,7 +8,8 @@ import { getJson } from './api';
 function App() {
   const [selectedMode, setSelectedMode] = useState(null);
   const [selectedSemester, setSelectedSemester] = useState(null);
-  const [selectedSpecialization, setSelectedSpecialization] = useState(null);
+  const [selectedMajor, setSelectedMajor] = useState(null);
+  const [selectedSection, setSelectedSection] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [activeTab, setActiveTab] = useState('home');
 
@@ -16,18 +17,39 @@ function App() {
   const resetSelections = () => {
     setSelectedMode(null);
     setSelectedSemester(null);
-    setSelectedSpecialization(null);
+    setSelectedMajor(null);
+    setSelectedSection(null);
     setSelectedSubject(null);
     setActiveTab('home');
   };
 
-  const specializations = [
-    { id: 'acad_a', name: 'ACAD A', fullName: 'Informatique Général A (ACAD A)', description: 'General Computer Science A', color: 'from-purple-500 to-pink-500', hoverColor: 'hover:from-purple-600 hover:to-pink-600' },
-    { id: 'acad_b', name: 'ACAD B', fullName: 'Informatique Général B (ACAD B)', description: 'General Computer Science B', color: 'from-pink-500 to-rose-500', hoverColor: 'hover:from-pink-600 hover:to-rose-600' },
-    { id: 'acad_c', name: 'ACAD C', fullName: 'Informatique Général C (ACAD C)', description: 'General Computer Science C', color: 'from-rose-500 to-red-500', hoverColor: 'hover:from-rose-600 hover:to-red-600' },
-    { id: 'isil_a', name: 'ISIL A', fullName: 'Ingénierie Système d\'Information et Logiciels A (ISIL A)', description: 'Information Systems and Software Engineering A', color: 'from-cyan-500 to-blue-500', hoverColor: 'hover:from-cyan-600 hover:to-blue-600' },
-    { id: 'isil_b', name: 'ISIL B', fullName: 'Ingénierie Système d\'Information et Logiciels B (ISIL B)', description: 'Information Systems and Software Engineering B', color: 'from-blue-500 to-indigo-500', hoverColor: 'hover:from-blue-600 hover:to-indigo-600' },
-    { id: 'isil_c', name: 'ISIL C', fullName: 'Ingénierie Système d\'Information et Logiciels C (ISIL C)', description: 'Information Systems and Software Engineering C', color: 'from-indigo-500 to-purple-500', hoverColor: 'hover:from-indigo-600 hover:to-purple-600' }
+  const majors = [
+    { 
+      id: 'acad', 
+      name: 'ACAD', 
+      fullName: 'Informatique Général', 
+      description: 'General Computer Science', 
+      color: 'from-purple-500 to-pink-500', 
+      hoverColor: 'hover:from-purple-600 hover:to-pink-600',
+      sections: [
+        { id: 'a', name: 'Section A', color: 'from-purple-500 to-pink-500' },
+        { id: 'b', name: 'Section B', color: 'from-pink-500 to-rose-500' },
+        { id: 'c', name: 'Section C', color: 'from-rose-500 to-red-500' }
+      ]
+    },
+    { 
+      id: 'isil', 
+      name: 'ISIL', 
+      fullName: 'Ingénierie Système d\'Information et Logiciels', 
+      description: 'Information Systems and Software Engineering', 
+      color: 'from-cyan-500 to-blue-500', 
+      hoverColor: 'hover:from-cyan-600 hover:to-blue-600',
+      sections: [
+        { id: 'a', name: 'Section A', color: 'from-cyan-500 to-blue-500' },
+        { id: 'b', name: 'Section B', color: 'from-blue-500 to-indigo-500' },
+        { id: 'c', name: 'Section C', color: 'from-indigo-500 to-purple-500' }
+      ]
+    }
   ];
 
   const [academicYears, setAcademicYears] = useState([]);
@@ -51,11 +73,11 @@ function App() {
         const years = [...new Set(driveLinks.map(link => `${link.start_year}-${link.end_year}`))];
         if (years.length) setAcademicYears(years);
         
-        // Fetch exam resources for each specialization
-        const specializations = ['isil_a', 'isil_b', 'isil_c', 'acad_a', 'acad_b', 'acad_c'];
+        // Fetch exam resources for each major-section combination
+        const majorSections = ['isil_a', 'isil_b', 'isil_c', 'acad_a', 'acad_b', 'acad_c'];
         const allExamResources = {};
         
-        for (const spec of specializations) {
+        for (const spec of majorSections) {
           try {
             const resources = await getJson(`/exam-resources/?specialization=${spec}`);
             allExamResources[spec] = resources.map(e => ({ 
@@ -70,7 +92,7 @@ function App() {
           }
         }
         
-        // Group by specialization type (isil vs acad)
+        // Group by major type (isil vs acad)
         setSubjects({
           isil: [
             ...allExamResources.isil_a || [],
@@ -324,24 +346,24 @@ function App() {
                     </button>
                   </div>
                 </div>
-              ) : !selectedSpecialization ? (
+              ) : !selectedMajor ? (
                 <div className="space-y-8">
                   <div className="text-center mb-8">
-                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Specialization</h3>
-                    <p className="text-gray-400 text-lg">Select your specialization for {selectedSemester.name}</p>
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Major</h3>
+                    <p className="text-gray-400 text-lg">Select your major for {selectedSemester.name}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {specializations.map((spec) => (
+                    {majors.map((major) => (
                       <button 
-                        key={spec.id} 
-                        onClick={() => setSelectedSpecialization(spec)} 
-                        className={`group relative overflow-hidden bg-gradient-to-br ${spec.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
+                        key={major.id} 
+                        onClick={() => setSelectedMajor(major)} 
+                        className={`group relative overflow-hidden bg-gradient-to-br ${major.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
                       >
                         <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
                         <div className="relative text-center">
-                          <h3 className="text-4xl font-bold text-white mb-4">{spec.name}</h3>
-                          <p className="text-white/90 mb-3 text-lg">{spec.fullName}</p>
-                          <p className="text-white/80 text-sm">{spec.description}</p>
+                          <h3 className="text-4xl font-bold text-white mb-4">{major.name}</h3>
+                          <p className="text-white/90 mb-3 text-lg">{major.fullName}</p>
+                          <p className="text-white/80 text-sm">{major.description}</p>
                         </div>
                       </button>
                     ))}
@@ -352,22 +374,49 @@ function App() {
                     </button>
                   </div>
                 </div>
+              ) : !selectedSection ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Section</h3>
+                    <p className="text-gray-400 text-lg">Select your section for {selectedMajor.name}</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {selectedMajor.sections.map((section) => (
+                      <button 
+                        key={section.id} 
+                        onClick={() => setSelectedSection(section)} 
+                        className={`group relative overflow-hidden bg-gradient-to-br ${section.color} p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
+                      >
+                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
+                        <div className="relative text-center">
+                          <h3 className="text-2xl font-bold text-white mb-2">{section.name}</h3>
+                          <p className="text-white/80 text-sm">{selectedMajor.name} {section.id.toUpperCase()}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-center">
+                    <button onClick={() => setSelectedMajor(null)} className="text-purple-400 hover:text-purple-300 underline text-lg transition-colors">
+                      ← Back to Major Selection
+                    </button>
+                  </div>
+                </div>
               ) : (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedSpecialization.name}</h3>
-                      <p className="text-gray-400">Video content for your selected semester and specialization</p>
+                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name} {selectedSection.id.toUpperCase()}</h3>
+                      <p className="text-gray-400">Video content for your selected semester, major, and section</p>
                     </div>
                     <button 
-                      onClick={() => setSelectedSpecialization(null)} 
+                      onClick={() => setSelectedSection(null)} 
                       className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
                     >
                       ← Back
                     </button>
                   </div>
                   <LessonDrives 
-                    specialization={selectedSpecialization} 
+                    specialization={{ id: `${selectedMajor.id}_${selectedSection.id}`, name: `${selectedMajor.name} ${selectedSection.id.toUpperCase()}` }} 
                     semester={selectedSemester} 
                   />
                 </div>
@@ -415,24 +464,24 @@ function App() {
                     </button>
                   </div>
                 </div>
-              ) : !selectedSpecialization ? (
+              ) : !selectedMajor ? (
                 <div className="space-y-8">
                   <div className="text-center mb-8">
-                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Specialization</h3>
-                    <p className="text-gray-400 text-lg">Select your specialization for {selectedSemester.name}</p>
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Major</h3>
+                    <p className="text-gray-400 text-lg">Select your major for {selectedSemester.name}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {specializations.map((spec) => (
+                    {majors.map((major) => (
                       <button 
-                        key={spec.id} 
-                        onClick={() => setSelectedSpecialization(spec)} 
-                        className={`group relative overflow-hidden bg-gradient-to-br ${spec.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
+                        key={major.id} 
+                        onClick={() => setSelectedMajor(major)} 
+                        className={`group relative overflow-hidden bg-gradient-to-br ${major.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
                       >
                         <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
                         <div className="relative text-center">
-                          <h3 className="text-4xl font-bold text-white mb-4">{spec.name}</h3>
-                          <p className="text-white/90 mb-3 text-lg">{spec.fullName}</p>
-                          <p className="text-white/80 text-sm">{spec.description}</p>
+                          <h3 className="text-4xl font-bold text-white mb-4">{major.name}</h3>
+                          <p className="text-white/90 mb-3 text-lg">{major.fullName}</p>
+                          <p className="text-white/80 text-sm">{major.description}</p>
                         </div>
                       </button>
                     ))}
@@ -443,22 +492,49 @@ function App() {
                     </button>
                   </div>
                 </div>
+              ) : !selectedSection ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Section</h3>
+                    <p className="text-gray-400 text-lg">Select your section for {selectedMajor.name}</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {selectedMajor.sections.map((section) => (
+                      <button 
+                        key={section.id} 
+                        onClick={() => setSelectedSection(section)} 
+                        className={`group relative overflow-hidden bg-gradient-to-br ${section.color} p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
+                      >
+                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
+                        <div className="relative text-center">
+                          <h3 className="text-2xl font-bold text-white mb-2">{section.name}</h3>
+                          <p className="text-white/80 text-sm">{selectedMajor.name} {section.id.toUpperCase()}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-center">
+                    <button onClick={() => setSelectedMajor(null)} className="text-blue-400 hover:text-blue-300 underline text-lg transition-colors">
+                      ← Back to Major Selection
+                    </button>
+                  </div>
+                </div>
               ) : (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedSpecialization.name}</h3>
-                      <p className="text-gray-400">Course materials for your selected semester and specialization</p>
+                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name} {selectedSection.id.toUpperCase()}</h3>
+                      <p className="text-gray-400">Course materials for your selected semester, major, and section</p>
                     </div>
                     <button 
-                      onClick={() => setSelectedSpecialization(null)} 
+                      onClick={() => setSelectedSection(null)} 
                       className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-blue-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105"
                     >
                       ← Back
                     </button>
                   </div>
                   <LessonDrives 
-                    specialization={selectedSpecialization}
+                    specialization={{ id: `${selectedMajor.id}_${selectedSection.id}`, name: `${selectedMajor.name} ${selectedSection.id.toUpperCase()}` }} 
                     semester={selectedSemester} 
                   />
                 </div>
@@ -507,25 +583,25 @@ function App() {
                     </button>
                   </div>
                 </div>
-              ) : !selectedSpecialization ? (
+              ) : !selectedMajor ? (
                 <div className="space-y-8">
                   <div className="text-center mb-8 animate-fade-in-up delay-200">
-                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Specialization</h3>
-                    <p className="text-gray-400 text-lg">Select your specialization for {selectedSemester.name}</p>
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Major</h3>
+                    <p className="text-gray-400 text-lg">Select your major for {selectedSemester.name}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {specializations.map((spec, index) => (
+                    {majors.map((major, index) => (
                       <button 
-                        key={spec.id} 
-                        onClick={() => setSelectedSpecialization(spec)} 
-                        className={`group relative overflow-hidden bg-gradient-to-br ${spec.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20 animate-fade-in-up hover:animate-pulse`}
+                        key={major.id} 
+                        onClick={() => setSelectedMajor(major)} 
+                        className={`group relative overflow-hidden bg-gradient-to-br ${major.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20 animate-fade-in-up hover:animate-pulse`}
                         style={{ animationDelay: `${300 + index * 100}ms` }}
                       >
                         <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl group-hover:animate-ping"></div>
                         <div className="relative text-center">
-                          <h3 className="text-4xl font-bold text-white mb-4">{spec.name}</h3>
-                          <p className="text-white/90 mb-3 text-lg">{spec.fullName}</p>
-                          <p className="text-white/80 text-sm">{spec.description}</p>
+                          <h3 className="text-4xl font-bold text-white mb-4">{major.name}</h3>
+                          <p className="text-white/90 mb-3 text-lg">{major.fullName}</p>
+                          <p className="text-white/80 text-sm">{major.description}</p>
                         </div>
                       </button>
                     ))}
@@ -536,17 +612,44 @@ function App() {
                     </button>
                   </div>
                 </div>
+              ) : !selectedSection ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8 animate-fade-in-up delay-200">
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Section</h3>
+                    <p className="text-gray-400 text-lg">Select your section for {selectedMajor.name}</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {selectedMajor.sections.map((section, index) => (
+                      <button 
+                        key={section.id} 
+                        onClick={() => setSelectedSection(section)} 
+                        className={`group relative overflow-hidden bg-gradient-to-br ${section.color} p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20 animate-fade-in-up hover:animate-pulse`}
+                        style={{ animationDelay: `${300 + index * 100}ms` }}
+                      >
+                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl group-hover:animate-ping"></div>
+                        <div className="relative text-center">
+                          <h3 className="text-2xl font-bold text-white mb-2">{section.name}</h3>
+                          <p className="text-white/80 text-sm">{selectedMajor.name} {section.id.toUpperCase()}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-center">
+                    <button onClick={() => setSelectedMajor(null)} className="text-red-400 hover:text-red-300 underline text-lg transition-colors">
+                      ← Back to Major Selection
+                    </button>
+                  </div>
+                </div>
               ) : !selectedSubject ? (
                 <div className="space-y-8">
                   <div className="text-center mb-8 animate-fade-in-up delay-200">
                     <h3 className="text-2xl font-bold text-white mb-4">Choose Your Subject</h3>
-                    <p className="text-gray-400 text-lg">Select your subject for {selectedSemester.name} - {selectedSpecialization.name}</p>
+                    <p className="text-gray-400 text-lg">Select your subject for {selectedSemester.name} - {selectedMajor.name} {selectedSection.id.toUpperCase()}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {(() => {
-                      // Filter subjects based on specialization type (isil vs acad)
-                      const specializationType = selectedSpecialization.id.startsWith('isil') ? 'isil' : 'acad';
-                      const availableSubjects = subjects[specializationType] || [];
+                      // Filter subjects based on major type (isil vs acad)
+                      const availableSubjects = subjects[selectedMajor.id] || [];
                       
                       return availableSubjects.map((subject, index) => (
                         <button 
@@ -566,8 +669,8 @@ function App() {
                     })()}
                   </div>
                   <div className="text-center">
-                    <button onClick={() => setSelectedSpecialization(null)} className="text-red-400 hover:text-red-300 underline text-lg transition-colors">
-                      ← Back to Specialization Selection
+                    <button onClick={() => setSelectedSection(null)} className="text-red-400 hover:text-red-300 underline text-lg transition-colors">
+                      ← Back to Section Selection
                     </button>
                   </div>
                 </div>
@@ -575,8 +678,8 @@ function App() {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedSpecialization.name} - {selectedSubject.name}</h3>
-                      <p className="text-gray-400">Exam materials for your selected semester, specialization, and subject</p>
+                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedMajor.name} {selectedSection.id.toUpperCase()} - {selectedSubject.name}</h3>
+                      <p className="text-gray-400">Exam materials for your selected semester, major, section, and subject</p>
                     </div>
                     <button 
                       onClick={() => setSelectedSubject(null)} 
@@ -586,7 +689,7 @@ function App() {
                     </button>
                   </div>
                   <LessonDrives 
-                    specialization={selectedSpecialization} 
+                    specialization={{ id: `${selectedMajor.id}_${selectedSection.id}`, name: `${selectedMajor.name} ${selectedSection.id.toUpperCase()}` }} 
                     subject={selectedSubject} 
                   />
                 </div>
@@ -739,11 +842,19 @@ function App() {
                       <span className="text-pink-400">{selectedSemester.name}</span>
                     </>
                   )}
-                  {selectedSpecialization && (
+                  {selectedMajor && (
                     <>
                       <span className="text-gray-400">•</span>
                       <span className={`${selectedMode === 'videos' ? 'text-purple-400' : selectedMode === 'exams' ? 'text-red-400' : 'text-blue-400'}`}>
-                        {selectedSpecialization.name}
+                        {selectedMajor.name}
+                      </span>
+                    </>
+                  )}
+                  {selectedSection && (
+                    <>
+                      <span className="text-gray-400">•</span>
+                      <span className={`${selectedMode === 'videos' ? 'text-purple-400' : selectedMode === 'exams' ? 'text-red-400' : 'text-blue-400'}`}>
+                        {selectedSection.name}
                       </span>
                     </>
                   )}
