@@ -7,11 +7,19 @@ import { getJson } from './api';
 
 function App() {
   const [selectedMode, setSelectedMode] = useState(null);
-  const [selectedSpecialization, setSelectedSpecialization] = useState(null);
-  const [selectedYear, setSelectedYear] = useState(null);
   const [selectedSemester, setSelectedSemester] = useState(null);
+  const [selectedSpecialization, setSelectedSpecialization] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [activeTab, setActiveTab] = useState('home');
+
+  // Reset all selections when going back to home
+  const resetSelections = () => {
+    setSelectedMode(null);
+    setSelectedSemester(null);
+    setSelectedSpecialization(null);
+    setSelectedSubject(null);
+    setActiveTab('home');
+  };
 
   const specializations = [
     { id: 'acad_a', name: 'ACAD A', fullName: 'Informatique Général A (ACAD A)', description: 'General Computer Science A', color: 'from-purple-500 to-pink-500', hoverColor: 'hover:from-purple-600 hover:to-pink-600' },
@@ -165,7 +173,10 @@ function App() {
                   <p className="text-gray-400 text-center mb-6 lg:mb-8 animate-fade-in-up delay-100">Select the type of learning resource you want to access.</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <button 
-                      onClick={() => setSelectedMode('drives')} 
+                      onClick={() => {
+                        setSelectedMode('drives');
+                        setActiveTab('drives');
+                      }}
                       className="group relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 p-4 sm:p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-blue-500/25 border border-blue-500/30 animate-fade-in-up delay-100 hover:animate-pulse"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-indigo-600/0 group-hover:from-blue-600/20 group-hover:to-indigo-600/20 transition-all duration-300 group-hover:animate-ping"></div>
@@ -177,11 +188,14 @@ function App() {
                         </div>
                         <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-2">Course Materials</h3>
                         <p className="text-blue-100 mb-2 sm:mb-3 text-xs sm:text-sm">Comprehensive study resources</p>
-                        <p className="text-blue-200/80 text-xs">Access organized course materials by year and semester</p>
+                        <p className="text-blue-200/80 text-xs">Access organized course materials by semester and specialization</p>
                       </div>
                     </button>
                     <button 
-                      onClick={() => setActiveTab('playlist')}
+                      onClick={() => {
+                        setSelectedMode('videos');
+                        setActiveTab('playlist');
+                      }}
                       className="group relative overflow-hidden bg-gradient-to-br from-purple-600 to-pink-700 p-4 sm:p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-purple-500/25 border border-purple-500/30 animate-fade-in-up delay-200 hover:animate-pulse"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/20 group-hover:to-pink-600/20 transition-all duration-300 group-hover:animate-ping"></div>
@@ -193,11 +207,14 @@ function App() {
                         </div>
                         <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-2">Video Content</h3>
                         <p className="text-purple-100 mb-2 sm:mb-3 text-xs sm:text-sm">Learn through videos</p>
-                        <p className="text-purple-200/80 text-xs">Watch curated video content by specialization and semester</p>
+                        <p className="text-purple-200/80 text-xs">Watch curated video content by semester and specialization</p>
                       </div>
                     </button>
                     <button 
-                      onClick={() => setActiveTab('exams')}
+                      onClick={() => {
+                        setSelectedMode('exams');
+                        setActiveTab('exams');
+                      }}
                       className="group relative overflow-hidden bg-gradient-to-br from-red-600 to-orange-700 p-4 sm:p-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-red-500/25 border border-red-500/30 animate-fade-in-up delay-300 hover:animate-pulse"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-red-600/0 to-orange-600/0 group-hover:from-red-600/20 group-hover:to-orange-600/20 transition-all duration-300 group-hover:animate-ping"></div>
@@ -209,7 +226,7 @@ function App() {
                         </div>
                         <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-2">Exams</h3>
                         <p className="text-red-100 mb-2 sm:mb-3 text-xs sm:text-sm">Exam materials</p>
-                        <p className="text-red-200/80 text-xs">Access exam materials by specialization and subject</p>
+                        <p className="text-red-200/80 text-xs">Access exam materials by semester and specialization</p>
                       </div>
                     </button>
                     <button 
@@ -276,35 +293,12 @@ function App() {
               <h2 className="text-4xl font-bold text-white mb-6">🎬 Video Playlists</h2>
               <p className="text-gray-300 mb-8 text-lg">Discover amazing video content to boost your learning!</p>
               
-              {/* Specialization Selection for Playlist */}
-              {!selectedSpecialization ? (
-                <div className="space-y-8">
-                  <div className="text-center mb-8">
-                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Specialization</h3>
-                    <p className="text-gray-400 text-lg">Select your specialization to view available video content</p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {specializations.map((spec) => (
-                      <button 
-                        key={spec.id} 
-                        onClick={() => setSelectedSpecialization(spec)} 
-                        className={`group relative overflow-hidden bg-gradient-to-br ${spec.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
-                      >
-                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
-                        <div className="relative text-center">
-                          <h3 className="text-4xl font-bold text-white mb-4">{spec.name}</h3>
-                          <p className="text-white/90 mb-3 text-lg">{spec.fullName}</p>
-                          <p className="text-white/80 text-sm">{spec.description}</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : !selectedSemester ? (
+              {/* Semester Selection for Video Content */}
+              {!selectedSemester ? (
                 <div className="space-y-8">
                   <div className="text-center mb-8">
                     <h3 className="text-2xl font-bold text-white mb-4">Choose Your Semester</h3>
-                    <p className="text-gray-400 text-lg">Select your semester for {selectedSpecialization.name}</p>
+                    <p className="text-gray-400 text-lg">Select your semester to view available video content</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {semesters.map((semester) => (
@@ -322,8 +316,39 @@ function App() {
                     ))}
                   </div>
                   <div className="text-center">
-                    <button onClick={() => setSelectedSpecialization(null)} className="text-purple-400 hover:text-purple-300 underline text-lg transition-colors">
-                      ← Back to Specialization Selection
+                    <button onClick={() => {
+                      setSelectedMode(null);
+                      setActiveTab('home');
+                    }} className="text-purple-400 hover:text-purple-300 underline text-lg transition-colors">
+                      ← Back to Home
+                    </button>
+                  </div>
+                </div>
+              ) : !selectedSpecialization ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Specialization</h3>
+                    <p className="text-gray-400 text-lg">Select your specialization for {selectedSemester.name}</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {specializations.map((spec) => (
+                      <button 
+                        key={spec.id} 
+                        onClick={() => setSelectedSpecialization(spec)} 
+                        className={`group relative overflow-hidden bg-gradient-to-br ${spec.color} p-8 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 border border-white/20`}
+                      >
+                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300 rounded-2xl"></div>
+                        <div className="relative text-center">
+                          <h3 className="text-4xl font-bold text-white mb-4">{spec.name}</h3>
+                          <p className="text-white/90 mb-3 text-lg">{spec.fullName}</p>
+                          <p className="text-white/80 text-sm">{spec.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-center">
+                    <button onClick={() => setSelectedSemester(null)} className="text-purple-400 hover:text-purple-300 underline text-lg transition-colors">
+                      ← Back to Semester Selection
                     </button>
                   </div>
                 </div>
@@ -331,11 +356,11 @@ function App() {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-2xl font-bold text-white">{selectedSpecialization.name} - {selectedSemester.name}</h3>
-                      <p className="text-gray-400">Video content for your selected specialization and semester</p>
+                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedSpecialization.name}</h3>
+                      <p className="text-gray-400">Video content for your selected semester and specialization</p>
                     </div>
                     <button 
-                      onClick={() => setSelectedSemester(null)} 
+                      onClick={() => setSelectedSpecialization(null)} 
                       className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
                     >
                       ← Back
@@ -356,15 +381,45 @@ function App() {
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-3xl blur-xl"></div>
             <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
-              <h2 className="text-4xl font-bold text-white mb-6">📚 Course Drives</h2>
+              <h2 className="text-4xl font-bold text-white mb-6">📚 Course Materials</h2>
               <p className="text-gray-300 mb-8 text-lg">Access all your course materials and study resources!</p>
               
-              {/* Specialization Selection for Drives */}
-              {!selectedSpecialization ? (
+              {/* Semester Selection for Course Materials */}
+              {!selectedSemester ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Semester</h3>
+                    <p className="text-gray-400 text-lg">Select your semester to view available course materials</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {semesters.map((semester) => (
+                      <button 
+                        key={semester.id} 
+                        onClick={() => setSelectedSemester(semester)} 
+                        className="group bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white p-8 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 border border-blue-500/30"
+                      >
+                        <div className="text-center">
+                          <h3 className="text-4xl font-bold mb-3">{semester.name}</h3>
+                          <p className="text-white/90 mb-2 text-lg">{semester.fullName}</p>
+                          <p className="text-white/80 text-sm">{semester.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-center">
+                    <button onClick={() => {
+                      setSelectedMode(null);
+                      setActiveTab('home');
+                    }} className="text-blue-400 hover:text-blue-300 underline text-lg transition-colors">
+                      ← Back to Home
+                    </button>
+                  </div>
+                </div>
+              ) : !selectedSpecialization ? (
                 <div className="space-y-8">
                   <div className="text-center mb-8">
                     <h3 className="text-2xl font-bold text-white mb-4">Choose Your Specialization</h3>
-                    <p className="text-gray-400 text-lg">Select your specialization to view available course materials</p>
+                    <p className="text-gray-400 text-lg">Select your specialization for {selectedSemester.name}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {specializations.map((spec) => (
@@ -382,56 +437,9 @@ function App() {
                       </button>
                     ))}
                   </div>
-                </div>
-              ) : !selectedYear ? (
-                <div className="space-y-8">
-                  <div className="text-center mb-8">
-                    <h3 className="text-2xl font-bold text-white mb-4">Select Your Year</h3>
-                    <p className="text-gray-400 text-lg">Choose your academic year for {selectedSpecialization.name}</p>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    {academicYears.map((year) => (
-                      <button 
-                        key={year} 
-                        onClick={() => setSelectedYear(year)} 
-                        className="group bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white p-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 border border-blue-500/30"
-                      >
-                        <div className="text-center">
-                          <h3 className="text-xl font-bold">{year}</h3>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
                   <div className="text-center">
-                    <button onClick={() => setSelectedSpecialization(null)} className="text-blue-400 hover:text-blue-300 underline text-lg transition-colors">
-                      ← Back to Specialization Selection
-                    </button>
-                  </div>
-                </div>
-              ) : !selectedSemester ? (
-                <div className="space-y-8">
-                  <div className="text-center mb-8">
-                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Semester</h3>
-                    <p className="text-gray-400 text-lg">Select your semester for {selectedSpecialization.name} ({selectedYear})</p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {semesters.map((semester) => (
-                      <button 
-                        key={semester.id} 
-                        onClick={() => setSelectedSemester(semester)} 
-                        className="group bg-gradient-to-br from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white p-8 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 border border-indigo-500/30"
-                      >
-                        <div className="text-center">
-                          <h3 className="text-4xl font-bold mb-3">{semester.name}</h3>
-                          <p className="text-white/90 mb-2 text-lg">{semester.fullName}</p>
-                          <p className="text-white/80 text-sm">{semester.description}</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="text-center">
-                    <button onClick={() => setSelectedYear(null)} className="text-blue-400 hover:text-blue-300 underline text-lg transition-colors">
-                      ← Back to Year Selection
+                    <button onClick={() => setSelectedSemester(null)} className="text-blue-400 hover:text-blue-300 underline text-lg transition-colors">
+                      ← Back to Semester Selection
                     </button>
                   </div>
                 </div>
@@ -439,11 +447,11 @@ function App() {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-2xl font-bold text-white">{selectedSpecialization.name} - {selectedYear} - {selectedSemester.name}</h3>
-                      <p className="text-gray-400">Course materials for your selected specialization, year, and semester</p>
+                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedSpecialization.name}</h3>
+                      <p className="text-gray-400">Course materials for your selected semester and specialization</p>
                     </div>
                     <button 
-                      onClick={() => setSelectedSemester(null)} 
+                      onClick={() => setSelectedSpecialization(null)} 
                       className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-blue-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105"
                     >
                       ← Back
@@ -451,7 +459,6 @@ function App() {
                   </div>
                   <LessonDrives 
                     specialization={selectedSpecialization}
-                    year={selectedYear} 
                     semester={selectedSemester} 
                   />
                 </div>
@@ -465,15 +472,46 @@ function App() {
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-pink-500/20 rounded-3xl blur-xl"></div>
             <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700/50">
-              <h2 className="text-4xl font-bold text-white mb-6 animate-fade-in-up">📝 Exam Drives</h2>
+              <h2 className="text-4xl font-bold text-white mb-6 animate-fade-in-up">📝 Exams</h2>
               <p className="text-gray-300 mb-8 text-lg animate-fade-in-up delay-100">Access all your exam materials and study resources!</p>
               
-              {/* Specialization Selection for Exams */}
-              {!selectedSpecialization ? (
+              {/* Semester Selection for Exams */}
+              {!selectedSemester ? (
+                <div className="space-y-8">
+                  <div className="text-center mb-8 animate-fade-in-up delay-200">
+                    <h3 className="text-2xl font-bold text-white mb-4">Choose Your Semester</h3>
+                    <p className="text-gray-400 text-lg">Select your semester to view available exam materials</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {semesters.map((semester, index) => (
+                      <button 
+                        key={semester.id} 
+                        onClick={() => setSelectedSemester(semester)} 
+                        className="group bg-gradient-to-br from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white p-8 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 border border-red-500/30 animate-fade-in-up hover:animate-pulse"
+                        style={{ animationDelay: `${300 + index * 100}ms` }}
+                      >
+                        <div className="text-center">
+                          <h3 className="text-4xl font-bold mb-3">{semester.name}</h3>
+                          <p className="text-white/90 mb-2 text-lg">{semester.fullName}</p>
+                          <p className="text-white/80 text-sm">{semester.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-center">
+                    <button onClick={() => {
+                      setSelectedMode(null);
+                      setActiveTab('home');
+                    }} className="text-red-400 hover:text-red-300 underline text-lg transition-colors">
+                      ← Back to Home
+                    </button>
+                  </div>
+                </div>
+              ) : !selectedSpecialization ? (
                 <div className="space-y-8">
                   <div className="text-center mb-8 animate-fade-in-up delay-200">
                     <h3 className="text-2xl font-bold text-white mb-4">Choose Your Specialization</h3>
-                    <p className="text-gray-400 text-lg">Select your specialization to view available exam materials</p>
+                    <p className="text-gray-400 text-lg">Select your specialization for {selectedSemester.name}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {specializations.map((spec, index) => (
@@ -492,12 +530,17 @@ function App() {
                       </button>
                     ))}
                   </div>
+                  <div className="text-center">
+                    <button onClick={() => setSelectedSemester(null)} className="text-red-400 hover:text-red-300 underline text-lg transition-colors">
+                      ← Back to Semester Selection
+                    </button>
+                  </div>
                 </div>
               ) : !selectedSubject ? (
                 <div className="space-y-8">
                   <div className="text-center mb-8 animate-fade-in-up delay-200">
                     <h3 className="text-2xl font-bold text-white mb-4">Choose Your Subject</h3>
-                    <p className="text-gray-400 text-lg">Select your subject for {selectedSpecialization.name}</p>
+                    <p className="text-gray-400 text-lg">Select your subject for {selectedSemester.name} - {selectedSpecialization.name}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {(() => {
@@ -523,7 +566,7 @@ function App() {
                     })()}
                   </div>
                   <div className="text-center">
-                    <button onClick={() => setSelectedSpecialization(null)} className="text-purple-400 hover:text-purple-300 underline text-lg transition-colors">
+                    <button onClick={() => setSelectedSpecialization(null)} className="text-red-400 hover:text-red-300 underline text-lg transition-colors">
                       ← Back to Specialization Selection
                     </button>
                   </div>
@@ -532,12 +575,12 @@ function App() {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-2xl font-bold text-white">{selectedSpecialization.name} - {selectedSubject.name}</h3>
-                      <p className="text-gray-400">Exam materials for your selected specialization and subject</p>
+                      <h3 className="text-2xl font-bold text-white">{selectedSemester.name} - {selectedSpecialization.name} - {selectedSubject.name}</h3>
+                      <p className="text-gray-400">Exam materials for your selected semester, specialization, and subject</p>
                     </div>
                     <button 
                       onClick={() => setSelectedSubject(null)} 
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
+                      className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-red-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105"
                     >
                       ← Back
                     </button>
@@ -690,28 +733,18 @@ function App() {
                      selectedMode === 'videos' ? '🎬 Videos' : 
                      selectedMode === 'exams' ? '📝 Exams' : ''}
                   </span>
-                  {selectedMode === 'videos' && selectedSpecialization && (
-                    <>
-                      <span className="text-gray-400">•</span>
-                      <span className="text-purple-400">{selectedSpecialization.name}</span>
-                    </>
-                  )}
-                  {selectedMode === 'exams' && selectedSpecialization && (
-                    <>
-                      <span className="text-gray-400">•</span>
-                      <span className="text-red-400">{selectedSpecialization.name}</span>
-                    </>
-                  )}
-                  {selectedYear && selectedMode === 'drives' && (
-                    <>
-                      <span className="text-gray-400">•</span>
-                      <span className="text-green-400">{selectedYear}</span>
-                    </>
-                  )}
                   {selectedSemester && (
                     <>
                       <span className="text-gray-400">•</span>
                       <span className="text-pink-400">{selectedSemester.name}</span>
+                    </>
+                  )}
+                  {selectedSpecialization && (
+                    <>
+                      <span className="text-gray-400">•</span>
+                      <span className={`${selectedMode === 'videos' ? 'text-purple-400' : selectedMode === 'exams' ? 'text-red-400' : 'text-blue-400'}`}>
+                        {selectedSpecialization.name}
+                      </span>
                     </>
                   )}
                   {selectedSubject && selectedMode === 'exams' && (
@@ -731,11 +764,7 @@ function App() {
                     setActiveTab(tab.id);
                     // Reset state when switching to home
                     if (tab.id === 'home') {
-                      setSelectedMode(null);
-                      setSelectedSpecialization(null);
-                      setSelectedYear(null);
-                      setSelectedSemester(null);
-                      setSelectedSubject(null);
+                      resetSelections();
                     }
                   }}
                   className={`px-3 lg:px-6 py-2 lg:py-3 rounded-xl text-xs lg:text-sm font-medium transition-all duration-300 transform hover:scale-105 hover:animate-pulse ${
