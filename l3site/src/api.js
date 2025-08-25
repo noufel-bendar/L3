@@ -1,4 +1,6 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'https://l3-dkrz.onrender.com/api';
+// Auto-detect environment and use appropriate API base URL
+const API_BASE = import.meta.env.VITE_API_BASE || 
+  (import.meta.env.DEV ? 'http://localhost:8000/api' : 'https://l3-dkrz.onrender.com/api');
 
 async function getJson(path) {
   try {
