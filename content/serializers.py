@@ -9,7 +9,7 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
 
 
 class CourseDriveLinkSerializer(serializers.ModelSerializer):
-    academic_year_display = serializers.CharField(source='academic_year_display', read_only=True)
+    academic_year_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = CourseDriveLink
