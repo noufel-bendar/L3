@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: l3-backend
+    env: python
+    plan: free
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+    startCommand: |
+      gunicorn backend.wsgi --log-file -
+    postdeploy: |
+      python manage.py migrate --noinput
+      python manage.py update_exam_structure
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: DJANGO_SETTINGS_MODULE
+        value: backend.settings
+      - key: DATABASE_SSL_REQUIRE
+        value: 'false'
