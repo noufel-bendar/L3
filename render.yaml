@@ -16,5 +16,3 @@ services:
         value: 3.12.3
       - key: DJANGO_SETTINGS_MODULE
         value: backend.settings
-      - key: DATABASE_SSL_REQUIRE
-        value: 'false'
