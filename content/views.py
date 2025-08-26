@@ -36,6 +36,9 @@ class ExamResourceViewSet(viewsets.ModelViewSet):
     queryset = ExamResource.objects.all()
     serializer_class = ExamResourceSerializer
     permission_classes = [ReadOnlyOrAdmin]
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = ['specialization', 'semester']
+    ordering = ['specialization', 'name']
 
 
 class SummaryResourceViewSet(viewsets.ModelViewSet):

@@ -79,16 +79,21 @@ class ExamResource(models.Model):
         ISIL = "isil", "ISIL"
         ACAD = "acad", "ACAD"
 
+    class Semester(models.TextChoices):
+        S5 = "s5", "S5"
+        S6 = "s6", "S6"
+
     name = models.CharField(max_length=255)
     specialization = models.CharField(max_length=16, choices=Specialization.choices)
+    semester = models.CharField(max_length=8, choices=Semester.choices, default=Semester.S5)
     url = models.URLField()
 
     class Meta:
         unique_together = ("name", "specialization")
-        ordering = ["specialization", "name"]
+        ordering = ["specialization", "semester", "name"]
 
     def __str__(self) -> str:
-        return f"{self.name} ({self.specialization})"
+        return f"{self.name} ({self.specialization} {self.semester})"
 
 
 class SummaryResource(models.Model):

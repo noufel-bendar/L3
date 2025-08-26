@@ -591,7 +591,9 @@ function App() {
                    </div>
                    <LessonDrives 
                       specialization={selectedMajor.id}
-                     subject={null} 
+                      semester={selectedSemester}
+                      subject={null} 
+                     mode="exams"
                    />
                  </div>
               )}

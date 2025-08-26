@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { getJson } from '../api';
 
-const LessonDrives = ({ specialization, semester, subject }) => {
+const LessonDrives = ({ specialization, semester, subject, mode }) => {
   const [driveLinks, setDriveLinks] = useState([]);
   const [courses, setCourses] = useState([]);
   const [examResources, setExamResources] = useState([]);
@@ -26,14 +26,18 @@ const LessonDrives = ({ specialization, semester, subject }) => {
         }
 
         // Videos courses for specialization+semester
-        if (specialization && semester && !subject) {
-          const cs = await getJson(`/courses/?specialization=${specialization.id}&semester=${semester.id}`);
+        if (!mode && specialization && semester && !subject) {
+          const normalizedSpec = (typeof specialization.id === 'string' ? specialization.id : '').split('_')[0] || specialization.id;
+          const cs = await getJson(`/courses/?specialization=${normalizedSpec}&semester=${semester.id}`);
           setCourses(cs.map((c) => ({ id: c.id, name: c.name, videoPlaylists: c.videoPlaylists })));
         }
 
-        // Exam resources by specialization
-        if (specialization && subject) {
-          const ex = await getJson(`/exam-resources/?specialization=${specialization.id}`);
+        // Exam resources list by specialization (simplified flow)
+        if (mode === 'exams' && specialization) {
+          const specId = typeof specialization === 'string' ? specialization : (specialization.id || '');
+          const normalizedSpecForExams = specId.split('_')[0] || specId;
+          const semId = semester?.id || semester;
+          const ex = await getJson(`/exam-resources/?specialization=${normalizedSpecForExams}${semId ? `&semester=${semId}` : ''}`);
           setExamResources(ex);
         }
       } catch (err) {
@@ -44,7 +48,7 @@ const LessonDrives = ({ specialization, semester, subject }) => {
       }
     }
     load();
-  }, [specialization, semester, subject]);
+  }, [specialization, semester, subject, mode]);
 
   // Loading state
   if (loading) {
@@ -81,9 +85,9 @@ const LessonDrives = ({ specialization, semester, subject }) => {
   }
 
   // Determine if this is Course Materials flow, Videos flow, or Exams flow
-  const isCourseMaterialsFlow = specialization && semester && !subject;
-  const isVideosFlow = specialization && semester && !subject;
-  const isExamsFlow = specialization && subject;
+  const isCourseMaterialsFlow = !mode && specialization && semester && !subject;
+  const isVideosFlow = !mode && specialization && semester && !subject;
+  const isExamsListFlow = mode === 'exams' && specialization;
 
   if (isCourseMaterialsFlow) {
     // Course Materials flow: Display Google Drive links for the selected specialization and semester
@@ -281,24 +285,16 @@ const LessonDrives = ({ specialization, semester, subject }) => {
     );
   }
 
-  if (isExamsFlow) {
-    // Exams flow: Display exam materials for the selected subject
-    // Find the exam resource that matches the selected subject
-    const examResource = examResources.find(exam => 
-      exam.name.toLowerCase().includes(subject.name.toLowerCase()) ||
-      subject.name.toLowerCase().includes(exam.name.toLowerCase())
-    );
-
-    if (!examResource) {
+  if (isExamsListFlow) {
+    if (!examResources.length) {
       return (
         <div className="text-center py-12">
           <div className="inline-block p-4 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full mb-4">
             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p className="text-gray-400 text-xl">No exam materials available for {subject.name}</p>
-          <p className="text-gray-500 text-sm mt-2">Please check back later or contact the administrator.</p>
+          <p className="text-gray-400 text-xl">No exam materials available for this specialization.</p>
         </div>
       );
     }
@@ -316,49 +312,48 @@ const LessonDrives = ({ specialization, semester, subject }) => {
                 </svg>
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-white">
-                  Exam Materials - {examResource.name}
-                </h3>
-                <p className="text-yellow-200 text-lg">
-                  Access exam materials and past papers for {examResource.name}
-                </p>
+                <h3 className="text-2xl font-bold text-white">Exam Materials</h3>
+                <p className="text-yellow-200 text-lg">Browse available exam resources</p>
               </div>
             </div>
             <p className="text-gray-300 text-lg leading-relaxed">
-              Find exam materials, past papers, and study resources for {examResource.name} in {specialization?.name} specialization.
+              Access exam materials grouped by subject for this specialization.
             </p>
           </div>
         </div>
-        
-        {/* Exam Materials Card */}
-        <div className="relative overflow-hidden bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
-          <div className="flex items-center mb-6">
-            <div className="p-3 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl mr-4">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+
+        {/* Exam Resources List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {examResources.map((exam, index) => (
+            <div key={index} className="relative overflow-hidden bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+              <div className="flex items-center mb-4">
+                <div className="p-3 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl mr-4">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-white">{exam.name}</h3>
+                  <p className="text-gray-300">Exam materials</p>
+                </div>
+              </div>
+
+              <a
+                href={exam.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center p-3 bg-gradient-to-r from-yellow-600 to-orange-600 text-white font-semibold rounded-xl hover:from-yellow-500 hover:to-orange-500 transition-all duration-300 transform hover:scale-105"
+              >
+                <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                </svg>
+                Open Folder
+                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
             </div>
-            <div className="flex-1">
-              <h3 className="text-2xl font-bold text-white">{examResource.name}</h3>
-              <p className="text-gray-300">Exam materials and study resources</p>
-            </div>
-          </div>
-          
-          {/* Exam Link */}
-          <a
-            href={examResource.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center p-4 bg-gradient-to-r from-yellow-600 to-orange-600 text-white font-semibold rounded-xl hover:from-yellow-500 hover:to-orange-500 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-yellow-500/25"
-          >
-            <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-            Access Exam Materials
-            <svg className="w-5 h-5 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </a>
+          ))}
         </div>
       </div>
     );

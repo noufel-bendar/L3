@@ -25,9 +25,10 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(ExamResource)
 class ExamResourceAdmin(admin.ModelAdmin):
-    list_display = ("name", "specialization", "url")
-    list_filter = ("specialization",)
+    list_display = ("name", "specialization", "semester", "url")
+    list_filter = ("specialization", "semester")
     search_fields = ("name",)
+    fields = ("name", "specialization", "semester", "url")
 
 
 @admin.register(SummaryResource)
