@@ -16,3 +16,9 @@ services:
         value: 3.12.3
       - key: DJANGO_SETTINGS_MODULE
         value: backend.settings
+      - key: DATABASE_URL
+        value: postgresql://specheck_db_user:UAoVo094pzzRVKOIHI4EqwZoJdKttnn4@dpg-d2drltgdl3ps73b73ang-a.oregon-postgres.render.com/specheck_db
+      - key: DEBUG
+        value: false
+      - key: DATABASE_SSL_REQUIRE
+        value: true
