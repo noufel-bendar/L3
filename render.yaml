@@ -8,19 +8,31 @@ services:
       python manage.py collectstatic --noinput
     startCommand: |
       python manage.py migrate --noinput && \
+      python manage.py create_superuser && \
       python manage.py update_exam_structure && \
+      python manage.py populate_course_materials && \
+      python manage.py populate_video_content && \
       gunicorn backend.wsgi --log-file -
     postdeploy: |
       python manage.py migrate --noinput
+      python manage.py create_superuser
       python manage.py update_exam_structure
+      python manage.py populate_course_materials
+      python manage.py populate_video_content
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.3
       - key: DJANGO_SETTINGS_MODULE
         value: backend.settings
       - key: DATABASE_URL
-        value: postgresql://specheck_db_user:UAoVo094pzzRVKOIHI4EqwZoJdKttnn4@dpg-d2drltgdl3ps73b73ang-a.oregon-postgres.render.com/specheck_db
+        value: postgresql://neondb_owner:npg_XFQfLWR4b1du@ep-floral-union-a8h4usda-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&channel_binding=require
       - key: DEBUG
         value: false
       - key: DATABASE_SSL_REQUIRE
         value: true
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: admin
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: admin@example.com
+      - key: DJANGO_SUPERUSER_PASSWORD
+        value: admin123

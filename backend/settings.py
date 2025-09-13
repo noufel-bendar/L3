@@ -81,14 +81,20 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 # Database
-# Use DATABASE_URL if provided (e.g., on Render), otherwise fall back to SQLite for local dev
+# Use DATABASE_URL if provided (e.g., on Neon), otherwise fall back to SQLite for local dev
 DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600,
-        ssl_require=os.environ.get('DATABASE_SSL_REQUIRE', 'false').lower() == 'true',
+        ssl_require=os.environ.get('DATABASE_SSL_REQUIRE', 'true').lower() == 'true',
     )
 }
+
+# Ensure SSL is required for PostgreSQL connections (Neon requirement)
+if 'postgresql' in DATABASES['default']['ENGINE']:
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': 'require',
+    }
 
 
 # Password validation
