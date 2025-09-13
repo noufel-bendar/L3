@@ -8,14 +8,14 @@ services:
       python manage.py collectstatic --noinput
     startCommand: |
       python manage.py migrate --noinput && \
-      python manage.py create_superuser && \
+      python manage.py create_superuser --force && \
       python manage.py update_exam_structure && \
       python manage.py populate_course_materials && \
       python manage.py populate_video_content && \
       gunicorn backend.wsgi --log-file -
     postdeploy: |
       python manage.py migrate --noinput
-      python manage.py create_superuser
+      python manage.py create_superuser --force
       python manage.py update_exam_structure
       python manage.py populate_course_materials
       python manage.py populate_video_content
