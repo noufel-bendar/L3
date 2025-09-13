@@ -31,8 +31,8 @@ services:
       - key: DATABASE_SSL_REQUIRE
         value: true
       - key: DJANGO_SUPERUSER_USERNAME
-        value: admin
+        value: admin1
       - key: DJANGO_SUPERUSER_EMAIL
-        value: admin@example.com
+        value: bendarnoufel@gmail.com
       - key: DJANGO_SUPERUSER_PASSWORD
-        value: admin123
+        value: admin1234
