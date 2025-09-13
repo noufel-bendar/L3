@@ -1,15 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Starting Django application setup..."
-
-# Run migrations
-echo "Running migrations..."
-python manage.py migrate --noinput
-
-# Setup admin user
-echo "Setting up admin user..."
-python manage.py setup_admin
+echo "Starting Django application..."
 
 # Update exam structure
 echo "Updating exam structure..."
