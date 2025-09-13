@@ -25,7 +25,7 @@ services:
       - key: DJANGO_SETTINGS_MODULE
         value: backend.settings
       - key: DATABASE_URL
-        value: postgresql://neondb_owner:npg_XFQfLWR4b1du@ep-floral-union-a8h4usda-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&channel_binding=require
+        value: "postgresql://neondb_owner:npg_XFQfLWR4b1du@ep-floral-union-a8h4usda-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&channel_binding=require"
       - key: DEBUG
         value: false
       - key: DATABASE_SSL_REQUIRE
